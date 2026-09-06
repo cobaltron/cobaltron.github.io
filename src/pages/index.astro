@@ -1,0 +1,220 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Stage from '../components/Stage.astro';
+import { formatDate, isoDate } from '../lib/format';
+
+const published = <T extends { data: { draft: boolean } }>(items: T[]) =>
+  items.filter((i) => import.meta.env.DEV || !i.data.draft);
+
+const notes = published(await getCollection('notes'))
+  .sort(
+    (a, b) =>
+      (b.data.tended ?? b.data.planted).getTime() - (a.data.tended ?? a.data.planted).getTime()
+  )
+  .slice(0, 5);
+
+const posts = published(await getCollection('posts'))
+  .sort((a, b) => b.data.published.getTime() - a.data.published.getTime())
+  .slice(0, 3);
+
+const projects = published(await getCollection('projects'))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const links = (await getCollection('links'))
+  .sort((a, b) => b.data.added.getTime() - a.data.added.getTime())
+  .slice(0, 3);
+---
+
+<Base title="home">
+  <!-- ============ Hero ============ -->
+  <section class="hero">
+    <canvas class="dither-field" aria-hidden="true"></canvas>
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <p class="hero-eyebrow">A digital garden</p>
+          <h1>Rajarshi Lahiri</h1>
+          <p class="hero-lead">
+            Salesforce developer and applied AI engineer. This is where I think in
+            public — notes I keep revising, posts I've finished, and work I've shipped.
+            Some of it is <em>deliberately</em> unfinished.
+          </p>
+          <div class="hero-actions">
+            <a class="btn" href="/notes">Enter the garden</a>
+            <a class="btn btn--ghost" href="/about">About me</a>
+          </div>
+        </div>
+        <div class="portrait">
+          <img id="portrait-src" src="/img/photo.jpg" alt="Rajarshi Lahiri" width="240" height="240" />
+          <canvas id="portrait-dither" aria-hidden="true"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Recently tended ============ -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <p class="section-index"><span>01</span> Recently tended</p>
+        <h2 class="section-title">From the garden</h2>
+        <p class="section-sub">
+          Notes grow over time. The stage marker tells you how settled each one is.
+        </p>
+      </div>
+
+      {
+        notes.length === 0 ? (
+          <div class="empty">
+            <p>The garden is empty so far.</p>
+            <p>
+              Plant the first note at <code>/keystatic</code>.
+            </p>
+          </div>
+        ) : (
+          <ul class="stream">
+            {notes.map((note) => (
+              <li>
+                <div class="stream-item">
+                  <div class="stream-when">
+                    <Stage stage={note.data.stage} showLabel={false} />
+                    <time datetime={isoDate(note.data.tended ?? note.data.planted)}>
+                      {formatDate(note.data.tended ?? note.data.planted)}
+                    </time>
+                  </div>
+                  <div>
+                    <h3 class="stream-title">
+                      <a href={`/notes/${note.id}`}>{note.data.title}</a>
+                    </h3>
+                    {note.data.summary && <p class="stream-summary">{note.data.summary}</p>}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      {notes.length > 0 && <a class="section-more" href="/notes">All notes →</a>}
+    </div>
+  </section>
+
+  <!-- ============ Posts ============ -->
+  {
+    posts.length > 0 && (
+      <section class="section section--wash">
+        <div class="container container--narrow">
+          <div class="section-head">
+            <p class="section-index">
+              <span>02</span> Writing
+            </p>
+            <h2 class="section-title">Latest posts</h2>
+          </div>
+
+          <ul class="stream">
+            {posts.map((post) => (
+              <li>
+                <article class="stream-item">
+                  <div class="stream-when">
+                    <time datetime={isoDate(post.data.published)}>
+                      {formatDate(post.data.published)}
+                    </time>
+                  </div>
+                  <div>
+                    <h3 class="stream-title">
+                      <a href={`/posts/${post.id}`}>{post.data.title}</a>
+                    </h3>
+                    <p class="stream-summary">{post.data.summary}</p>
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ul>
+
+          <a class="section-more" href="/posts">
+            All posts →
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ Projects ============ -->
+  {
+    projects.length > 0 && (
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <p class="section-index">
+              <span>03</span> Work
+            </p>
+            <h2 class="section-title">Selected projects</h2>
+          </div>
+
+          <div class="grid grid--3">
+            {projects.map((project, i) => (
+              <article class="panel">
+                <p class="panel-num">P/{String(i + 1).padStart(2, '0')}</p>
+                <h3>
+                  <a href={`/projects/${project.id}`}>{project.data.title}</a>
+                </h3>
+                <p>{project.data.summary}</p>
+                {project.data.stack.length > 0 && (
+                  <div class="panel-foot">
+                    <ul class="tags">
+                      {project.data.stack.slice(0, 4).map((tech) => (
+                        <li>{tech}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+
+          <a class="section-more" href="/projects">
+            All projects →
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ Links ============ -->
+  {
+    links.length > 0 && (
+      <section class="section section--wash">
+        <div class="container container--narrow">
+          <div class="section-head">
+            <p class="section-index">
+              <span>04</span> Collected
+            </p>
+            <h2 class="section-title">Worth your time</h2>
+            <p class="section-sub">Things I've read recently and why they stuck.</p>
+          </div>
+
+          {links.map((link) => (
+            <article class="link-item">
+              <div class="link-head">
+                <h3 class="link-title">
+                  <a href={link.data.url} target="_blank" rel="noopener">
+                    {link.data.title}
+                  </a>
+                </h3>
+                {link.data.source && <span class="link-source">{link.data.source}</span>}
+              </div>
+              <p class="link-note">{link.data.note}</p>
+            </article>
+          ))}
+
+          <a class="section-more" href="/links">
+            All links →
+          </a>
+        </div>
+      </section>
+    )
+  }
+</Base>

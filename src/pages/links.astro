@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import { formatDate, isoDate } from '../lib/format';
+
+const links = (await getCollection('links')).sort(
+  (a, b) => b.data.added.getTime() - a.data.added.getTime()
+);
+
+const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
+---
+
+<Base
+  title="Links"
+  description="A curated reading list — things worth your time, with notes on why."
+>
+  <Hero eyebrow="Collected" compact>
+    <h1>Links</h1>
+    <p class="hero-lead">
+      Things I've read that changed how I think about something. The commentary is
+      the point — a bare URL is worth nothing six months later.
+    </p>
+  </Hero>
+
+  <section class="section">
+    <div class="container container--narrow">
+      {allTags.length > 0 && (
+        <div class="filters">
+          <span class="filter-label">Topic</span>
+          <button class="filter" data-filter="all" aria-pressed="true">All ({links.length})</button>
+          {allTags.map((tag) => (
+            <button class="filter" data-filter={tag} aria-pressed="false">{tag}</button>
+          ))}
+        </div>
+      )}
+
+      {links.length === 0 ? (
+        <div class="empty">
+          <p>Nothing collected yet.</p>
+          <p>Add links at <code>/keystatic</code> or in <code>src/content/links/</code>.</p>
+        </div>
+      ) : (
+        <div id="link-list">
+          {links.map((link) => (
+            <article class="link-item" data-tags={link.data.tags.join(' ')}>
+              <div class="link-head">
+                <h2 class="link-title">
+                  <a href={link.data.url} target="_blank" rel="noopener">{link.data.title}</a>
+                </h2>
+                {link.data.source && <span class="link-source">{link.data.source}</span>}
+              </div>
+              <p class="link-note">{link.data.note}</p>
+              <div class="link-foot">
+                {link.data.tags.length > 0 && (
+                  <ul class="tags">
+                    {link.data.tags.map((tag) => <li>#{tag}</li>)}
+                  </ul>
+                )}
+                <time datetime={isoDate(link.data.added)}>{formatDate(link.data.added)}</time>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .link-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .link-foot time {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-faint);
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter[data-filter]');
+  const items = document.querySelectorAll<HTMLElement>('#link-list > .link-item');
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const wanted = button.dataset.filter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      items.forEach((item) => {
+        const tags = (item.dataset.tags ?? '').split(' ');
+        item.hidden = !(wanted === 'all' || tags.includes(wanted!));
+      });
+    });
+  });
+</script>

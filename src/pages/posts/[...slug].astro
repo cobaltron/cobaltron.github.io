@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from 'astro:content';
+import Entry from '../../layouts/Entry.astro';
+import { getBacklinks } from '../../lib/graph';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts
+    .filter((post) => import.meta.env.DEV || !post.data.draft)
+    .map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const backlinks = await getBacklinks('posts', post.id);
+---
+
+<Entry
+  title={post.data.title}
+  summary={post.data.summary}
+  kind="post"
+  tags={post.data.tags}
+  published={post.data.published}
+  updated={post.data.updated}
+  body={post.body}
+  backlinks={backlinks}
+>
+  <Content />
+</Entry>

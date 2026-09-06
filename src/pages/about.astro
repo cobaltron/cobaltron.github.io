@@ -1,0 +1,178 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { formatDate, isoDate } from '../lib/format';
+
+const about = await getEntry('pages', 'about');
+const Content = about ? (await render(about)).Content : null;
+
+const roles = (await getCollection('roles')).sort((a, b) => a.data.order - b.data.order);
+const publications = (await getCollection('publications')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const achievements = (await getCollection('achievements')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<Base
+  title="About"
+  description="Rajarshi Lahiri — Salesforce developer and applied AI engineer, based in Kolkata."
+>
+  <section class="hero">
+    <canvas class="dither-field" aria-hidden="true"></canvas>
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <p class="hero-eyebrow">Kolkata, India</p>
+          <h1>About</h1>
+          <p class="hero-lead">
+            Salesforce developer and applied AI engineer. I build enterprise platform
+            solutions and AI-augmented systems, and I care about how they're delivered
+            as much as what they do.
+          </p>
+          <div class="hero-actions">
+            <a class="btn" href="/CV_Rajarshi%20Lahiri.pdf" download>
+              <i class="fas fa-arrow-down"></i> Download CV
+            </a>
+          </div>
+        </div>
+        <div class="portrait">
+          <img id="portrait-src" src="/img/photo.jpg" alt="Rajarshi Lahiri" width="240" height="240" />
+          <canvas id="portrait-dither" aria-hidden="true"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prose from Keystatic -->
+  {
+    Content && (
+      <section class="section">
+        <div class="container container--read">
+          <div class="prose">
+            <Content />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Work -->
+  {
+    roles.length > 0 && (
+      <section class="section section--wash">
+        <div class="container container--narrow">
+          <div class="section-head">
+            <p class="section-index">
+              <span>01</span> Experience
+            </p>
+            <h2 class="section-title">Work</h2>
+          </div>
+
+          {roles.map((role) => (
+            <article class="role">
+              <div class:list={['role-when', { 'is-current': role.data.current }]}>
+                {role.data.period}
+              </div>
+              <div>
+                <h3>{role.data.title}</h3>
+                <p class="role-org">{role.data.org}</p>
+                <p>{role.data.detail}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Publications -->
+  {
+    publications.length > 0 && (
+      <section class="section">
+        <div class="container container--narrow">
+          <div class="section-head">
+            <p class="section-index">
+              <span>02</span> Research
+            </p>
+            <h2 class="section-title">Publications</h2>
+          </div>
+
+          <div class="grid grid--2">
+            {publications.map((pub) => (
+              <article class="panel">
+                <p class="panel-num">
+                  {pub.data.venue}
+                  {pub.data.year && ` · ${pub.data.year}`}
+                </p>
+                <h3>
+                  {pub.data.url ? (
+                    <a href={pub.data.url} target="_blank" rel="noopener">
+                      {pub.data.title}
+                    </a>
+                  ) : (
+                    pub.data.title
+                  )}
+                </h3>
+                {pub.data.isbn && <p>ISBN {pub.data.isbn}</p>}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Achievements -->
+  {
+    achievements.length > 0 && (
+      <section class="section section--wash">
+        <div class="container">
+          <div class="section-head">
+            <p class="section-index">
+              <span>03</span> Recognition
+            </p>
+            <h2 class="section-title">Milestones</h2>
+          </div>
+
+          <div class="grid grid--3">
+            {achievements.map((item) => (
+              <article class="shot">
+                {item.data.image && (
+                  <div class="shot-img">
+                    <img src={item.data.image} alt={item.data.title} loading="lazy" decoding="async" />
+                  </div>
+                )}
+                <div class="shot-body">
+                  <h3>{item.data.title}</h3>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    about?.data.updated && (
+      <div class="container container--read">
+        <p class="updated-stamp">
+          Last updated{' '}
+          <time datetime={isoDate(about.data.updated)}>{formatDate(about.data.updated)}</time>
+        </p>
+      </div>
+    )
+  }
+</Base>
+
+<style>
+  .updated-stamp {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--text-faint);
+    padding: 2rem 0;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,118 @@
+---
+import Base from './Base.astro';
+import Stage from '../components/Stage.astro';
+import Backlinks from '../components/Backlinks.astro';
+import { formatDate, isoDate, readingTime } from '../lib/format';
+import { STAGE_META, STAGES } from '../content.config';
+import type { Ref } from '../lib/graph';
+
+interface Props {
+  title: string;
+  summary?: string;
+  description?: string;
+  kind: 'note' | 'post' | 'project';
+  stage?: (typeof STAGES)[number];
+  tags?: string[];
+  planted?: Date;
+  tended?: Date;
+  published?: Date;
+  updated?: Date;
+  body?: string;
+  backlinks: Ref[];
+  meta?: { label: string; value: string }[];
+}
+
+const {
+  title,
+  summary,
+  description,
+  kind,
+  stage,
+  tags = [],
+  planted,
+  tended,
+  published,
+  updated,
+  body,
+  backlinks,
+  meta = [],
+} = Astro.props;
+
+const KIND_LABEL = { note: 'Note', post: 'Post', project: 'Project' };
+const reading = readingTime(body);
+---
+
+<Base title={title} description={description ?? summary} type="article">
+  <article>
+    <div class="container container--read">
+      <header class="entry-header">
+        <p class="section-index"><span>{KIND_LABEL[kind]}</span></p>
+        <h1 class="entry-title">{title}</h1>
+        {summary && <p class="entry-summary">{summary}</p>}
+
+        <div class="entry-meta">
+          {stage && <Stage stage={stage} />}
+
+          {planted && (
+            <span>
+              Planted <time datetime={isoDate(planted)}>{formatDate(planted)}</time>
+            </span>
+          )}
+          {tended && (
+            <span>
+              Tended <time datetime={isoDate(tended)}>{formatDate(tended)}</time>
+            </span>
+          )}
+          {published && (
+            <time datetime={isoDate(published)}>{formatDate(published)}</time>
+          )}
+          {updated && (
+            <span>
+              Updated <time datetime={isoDate(updated)}>{formatDate(updated)}</time>
+            </span>
+          )}
+
+          {meta.map((m) => (
+            <span>
+              {m.label} <strong>{m.value}</strong>
+            </span>
+          ))}
+
+          {reading && <span>{reading}</span>}
+
+          {tags.length > 0 && (
+            <span class="tags-inline">
+              {tags.map((tag) => (
+                <span class="tag">#{tag}</span>
+              ))}
+            </span>
+          )}
+        </div>
+
+        {stage && (
+          <p class="stage-note">
+            <strong>{STAGE_META[stage].label}.</strong>
+            <span>{STAGE_META[stage].blurb}</span>
+          </p>
+        )}
+      </header>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <Backlinks refs={backlinks} />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .tags-inline {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .entry-header .section-index {
+    margin-bottom: 0;
+  }
+</style>

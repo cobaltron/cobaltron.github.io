@@ -1,0 +1,33 @@
+{
+  "name": "cobaltron-garden",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^7.3.1",
+    "@astrojs/mdx": "^8.0.0",
+    "@astrojs/markdown-remark": "^7.3.0",
+    "@astrojs/markdown-satteri": "^0.4.0",
+    "@astrojs/react": "^6.0.5",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/vercel": "^11.0.10",
+    "@keystatic/core": "^0.6.9",
+    "@keystatic/astro": "^6.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2"
+  },
+  "engines": {
+    "node": ">=20 <25"
+  }
+}

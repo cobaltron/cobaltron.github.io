@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import Entry from '../../layouts/Entry.astro';
+import { getBacklinks } from '../../lib/graph';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes
+    .filter((note) => import.meta.env.DEV || !note.data.draft)
+    .map((note) => ({ params: { slug: note.id }, props: { note } }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+const backlinks = await getBacklinks('notes', note.id);
+---
+
+<Entry
+  title={note.data.title}
+  summary={note.data.summary}
+  kind="note"
+  stage={note.data.stage}
+  tags={note.data.tags}
+  planted={note.data.planted}
+  tended={note.data.tended}
+  body={note.body}
+  backlinks={backlinks}
+>
+  <Content />
+</Entry>

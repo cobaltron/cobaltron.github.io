@@ -1,0 +1,39 @@
+---
+import type { Ref } from '../lib/graph';
+
+interface Props {
+  refs: Ref[];
+}
+
+const { refs } = Astro.props;
+
+const KIND_LABEL: Record<string, string> = {
+  notes: 'Note',
+  posts: 'Post',
+  projects: 'Project',
+};
+---
+
+<section class="backlinks" aria-labelledby="backlinks-heading">
+  <h2 id="backlinks-heading">
+    Linked from {refs.length > 0 && `(${refs.length})`}
+  </h2>
+
+  {
+    refs.length === 0 ? (
+      <p class="backlinks-empty">
+        Nothing links here yet. This note is a corner of the garden nobody has walked to.
+      </p>
+    ) : (
+      <ul class="backlink-list">
+        {refs.map((ref) => (
+          <li>
+            <span class="backlink-kind">{KIND_LABEL[ref.collection] ?? ref.collection}</span>
+            <a href={ref.url}>{ref.title}</a>
+            {ref.summary && <p>{ref.summary}</p>}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>

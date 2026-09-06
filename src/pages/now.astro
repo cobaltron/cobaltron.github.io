@@ -1,0 +1,50 @@
+---
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import { formatDate, isoDate } from '../lib/format';
+
+const now = await getEntry('pages', 'now');
+const Content = now ? (await render(now)).Content : null;
+---
+
+<Base
+  title="Now"
+  description="What Rajarshi Lahiri is working on, reading and learning at the moment."
+>
+  <Hero eyebrow="Now" compact>
+    <h1>What I'm doing now</h1>
+    <p class="hero-lead">
+      A snapshot, not a résumé. If it's badly out of date, that's a fair thing to
+      judge me on.
+    </p>
+    {now?.data.updated && (
+      <p class="now-stamp">
+        Last updated <time datetime={isoDate(now.data.updated)}>{formatDate(now.data.updated)}</time>
+      </p>
+    )}
+  </Hero>
+
+  <section class="section">
+    <div class="container container--read">
+      {Content ? (
+        <div class="prose"><Content /></div>
+      ) : (
+        <div class="empty">
+          <p>No /now page written yet.</p>
+          <p>Write it at <code>/keystatic</code> under Pages → Now.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .now-stamp {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import Stage from '../../components/Stage.astro';
+import { formatDate, isoDate } from '../../lib/format';
+import { STAGES } from '../../content.config';
+
+const notes = (await getCollection('notes'))
+  .filter((n) => import.meta.env.DEV || !n.data.draft)
+  .sort((a, b) => {
+    const at = (a.data.tended ?? a.data.planted).getTime();
+    const bt = (b.data.tended ?? b.data.planted).getTime();
+    return bt - at;
+  });
+
+const counts = STAGES.map((stage) => ({
+  stage,
+  count: notes.filter((n) => n.data.stage === stage).length,
+}));
+---
+
+<Base
+  title="Notes"
+  description="Evergreen notes — ideas I keep coming back to and revise as I learn better."
+>
+  <Hero eyebrow="The garden" compact>
+    <h1>Notes</h1>
+    <p class="hero-lead">
+      Evergreen, non-chronological, and openly unfinished. Each note carries a growth
+      stage so you know how much to trust it, and links to whatever else it touches.
+    </p>
+  </Hero>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="filters">
+        <span class="filter-label">Stage</span>
+        <button class="filter" data-filter="all" aria-pressed="true">All ({notes.length})</button>
+        {
+          counts.map(({ stage, count }) => (
+            <button class="filter" data-filter={stage} aria-pressed="false" disabled={count === 0}>
+              {stage} ({count})
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        notes.length === 0 ? (
+          <div class="empty">
+            <p>No notes planted yet.</p>
+            <p>
+              Add one at <code>/keystatic</code> or drop an .mdx file in{' '}
+              <code>src/content/notes/</code>.
+            </p>
+          </div>
+        ) : (
+          <ul class="stream" id="note-list">
+            {notes.map((note) => (
+              <li data-stage={note.data.stage}>
+                <div class="stream-item">
+                  <div class="stream-when">
+                    <Stage stage={note.data.stage} showLabel={false} />
+                    <time datetime={isoDate(note.data.tended ?? note.data.planted)}>
+                      {formatDate(note.data.tended ?? note.data.planted)}
+                    </time>
+                  </div>
+                  <div>
+                    <h2 class="stream-title">
+                      <a href={`/notes/${note.id}`}>{note.data.title}</a>
+                    </h2>
+                    {note.data.summary && <p class="stream-summary">{note.data.summary}</p>}
+                    {note.data.tags.length > 0 && (
+                      <ul class="tags">
+                        {note.data.tags.map((tag) => (
+                          <li>#{tag}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter[data-filter]');
+  const items = document.querySelectorAll<HTMLLIElement>('#note-list > li');
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const wanted = button.dataset.filter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      items.forEach((item) => {
+        item.hidden = !(wanted === 'all' || item.dataset.stage === wanted);
+      });
+    });
+  });
+</script>

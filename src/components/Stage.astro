@@ -1,0 +1,35 @@
+---
+import { STAGE_META, STAGES } from '../content.config';
+
+interface Props {
+  stage: (typeof STAGES)[number];
+  showLabel?: boolean;
+}
+
+const { stage, showLabel = true } = Astro.props;
+const meta = STAGE_META[stage];
+---
+
+<span class="stage" data-stage={stage} title={meta.blurb}>
+  <span class="stage-dots" aria-hidden="true">
+    {[1, 2, 3].map((n) => (
+      <span class:list={['stage-dot', { 'is-lit': n <= meta.density }]}></span>
+    ))}
+  </span>
+  {showLabel && <span>{meta.label}</span>}
+  <span class="sr-only">{meta.blurb}</span>
+</span>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

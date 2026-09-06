@@ -1,0 +1,25 @@
+---
+title: Medical Document Intake Pipeline
+summary: Multi-agent Agno pipeline with five sequential stages targeting FHIR-compatible structured output, using Gemini 2.0 Flash and Pixtral for vision-heavy extraction.
+year: 2025
+role: Design and implementation
+stack:
+  - Agno
+  - Python
+  - Gemini 2.0 Flash
+  - Pixtral
+  - Streamlit
+featured: true
+order: 1
+draft: false
+---
+
+A five-stage sequential pipeline that takes messy clinical documents and produces
+FHIR-compatible structured output. Vision-heavy extraction is handled by Pixtral,
+with Gemini 2.0 Flash driving the reasoning stages. Deployed on Streamlit Cloud.
+
+## Why it's staged
+
+Each stage has a narrow contract and can be evaluated on its own, which makes
+failures attributable rather than mysterious — the same argument I make in
+[[Retrieval evaluation is the hard part]].

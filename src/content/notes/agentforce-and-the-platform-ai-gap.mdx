@@ -1,0 +1,26 @@
+---
+title: Agentforce and the platform AI gap
+summary: Platform-native agents inherit the platform's data model and permissions — which is both the whole advantage and the main constraint.
+stage: seedling
+tags:
+  - salesforce
+  - agents
+  - ai
+planted: 2026-09-01
+draft: false
+---
+
+Early notes, written while working through this on real engagements. Rough.
+
+An agent built on the platform inherits the platform's object model, sharing rules
+and field-level security for free. That's a real advantage over a bolted-on
+assistant reading from an export: the agent physically cannot see what the running
+user cannot see.
+
+The constraint is the same fact from the other side. The agent's world is the data
+model, and if the data model doesn't express the thing you want to reason about, no
+amount of prompting will conjure it.
+
+Where this connects to general retrieval work is that grounding is a data modelling
+problem before it is a prompting problem — related to
+[[Retrieval evaluation is the hard part]].

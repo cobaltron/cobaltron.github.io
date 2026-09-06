@@ -1,0 +1,42 @@
+---
+title: Rebuilding this site as a digital garden
+summary: Why I replaced a single-page portfolio with something that grows — and the build-time machinery that makes backlinks work.
+published: 2026-09-06
+tags:
+  - meta
+  - astro
+draft: false
+---
+
+A portfolio page is a snapshot. It says what you'd shipped on the day you last
+edited it, and then it rots quietly. I wanted something that accumulates instead.
+
+## What changed
+
+The old site was one HTML file: hero, skills, projects, publications. It was fine.
+It also hadn't meaningfully changed in years, because there was nowhere to put a
+half-formed thought. Adding a section felt like a commitment.
+
+Now there are two kinds of writing. Dated posts like this one, and
+[notes](/notes) that carry a growth stage instead of a date and get revised
+whenever I learn better. The rules are written up in [[How this garden works]].
+
+## The interesting part is the link graph
+
+Notes reference each other with `[[wiki-links]]`. Two build-time pieces make that
+work:
+
+1. A **remark plugin** that resolves each `[[target]]` against the set of entries
+   that actually exist, and renders unresolved ones as visible "seeds" rather than
+   dropping them.
+2. A **graph module** that walks every entry's raw body, extracts its outgoing
+   links, and inverts them into a backlink map.
+
+Because both run at build time over files in the repo, the backlinks can't drift out
+of sync with the content. There's no database to reconcile.
+
+## Why files, not a hosted CMS
+
+I write through a CMS admin UI, but it commits MDX to the repo rather than storing
+rows in someone else's database. That keeps the link graph computable, keeps the
+content greppable, and means the whole site is still just a folder I own.

@@ -1,0 +1,8 @@
+{
+  "title": "LLM Powered Autonomous Agents",
+  "url": "https://lilianweng.github.io/posts/2023-06-23-agent/",
+  "source": "Lilian Weng",
+  "note": "The clearest available breakdown of agent architecture into planning, memory and tool use. I keep returning to it as a checklist when a multi-agent design starts drifting — usually the missing piece is memory, not planning.",
+  "tags": ["ai", "agents"],
+  "added": "2026-09-06"
+}

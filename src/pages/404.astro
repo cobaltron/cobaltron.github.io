@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+---
+
+<Base title="Not found" description="That path doesn't exist.">
+  <Hero eyebrow="404">
+    <h1>Nothing grows here</h1>
+    <p class="hero-lead">
+      That path doesn't exist — or it did once and got pruned. Try the
+      <a href="/notes">notes</a> or head back to the <a href="/">entrance</a>.
+    </p>
+    <div class="hero-actions">
+      <a class="btn" href="/">Back to the garden</a>
+    </div>
+  </Hero>
+</Base>

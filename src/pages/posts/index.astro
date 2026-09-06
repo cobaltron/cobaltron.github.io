@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import { formatDate, isoDate, readingTime } from '../../lib/format';
+
+const posts = (await getCollection('posts'))
+  .filter((p) => import.meta.env.DEV || !p.data.draft)
+  .sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+---
+
+<Base title="Posts" description="Essays and write-ups, newest first.">
+  <Hero eyebrow="The stream" compact>
+    <h1>Posts</h1>
+    <p class="hero-lead">
+      Longer pieces with a date on them — finished thoughts rather than growing ones.
+      For the things still taking shape, see the <a href="/notes">notes</a>.
+    </p>
+  </Hero>
+
+  <section class="section">
+    <div class="container container--narrow">
+      {
+        posts.length === 0 ? (
+          <div class="empty">
+            <p>Nothing published yet.</p>
+            <p>
+              Write one at <code>/keystatic</code> or add an .mdx file to{' '}
+              <code>src/content/posts/</code>.
+            </p>
+          </div>
+        ) : (
+          <ul class="stream">
+            {posts.map((post) => (
+              <li>
+                <article class="stream-item">
+                  <div class="stream-when">
+                    <time datetime={isoDate(post.data.published)}>
+                      {formatDate(post.data.published)}
+                    </time>
+                    <span>{readingTime(post.body)}</span>
+                  </div>
+                  <div>
+                    <h2 class="stream-title">
+                      <a href={`/posts/${post.id}`}>{post.data.title}</a>
+                    </h2>
+                    <p class="stream-summary">{post.data.summary}</p>
+                    {post.data.tags.length > 0 && (
+                      <ul class="tags">
+                        {post.data.tags.map((tag) => (
+                          <li>#{tag}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+</Base>

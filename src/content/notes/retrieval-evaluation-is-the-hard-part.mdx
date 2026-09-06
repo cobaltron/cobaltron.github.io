@@ -1,0 +1,41 @@
+---
+title: Retrieval evaluation is the hard part
+summary: Generation quality gets the attention, but in most RAG systems the retrieval step is where the failures actually originate.
+stage: budding
+tags:
+  - rag
+  - evaluation
+  - ai
+planted: 2026-08-14
+tended: 2026-09-02
+draft: false
+---
+
+Most RAG demos are a thin wrapper around a vector search that was never measured.
+The generation step is visible and easy to eyeball, so it gets the attention. The
+retrieval step is invisible and gets none.
+
+## The failure is usually upstream
+
+When a RAG answer is wrong, the interesting question is whether the right chunk was
+ever in the context window. If it wasn't, no amount of prompt engineering on the
+generation step will help — you're tuning the wrong stage.
+
+That's a boring observation, but it changes what you build first: a harness that can
+tell you recall@k on a fixed question set, before anything else.
+
+## What a minimal harness needs
+
+- A fixed set of questions with known-good source documents.
+- Recall@k, so you know whether the answer was retrievable at all.
+- Per-stage attribution, so a failure is assignable to retrieval or generation.
+
+This is the same argument for staging a pipeline into narrow, separately testable
+contracts — the structure behind the
+[Medical Document Intake Pipeline](/projects/medical-document-intake-pipeline).
+
+## Still unresolved
+
+How much of retrieval quality is really a [[Chunking strategies]] problem versus an
+embedding problem, I genuinely don't know yet. That's why this note is budding and
+not evergreen — see [[How this garden works]].
