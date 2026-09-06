@@ -201,7 +201,7 @@ Open <http://localhost:4321/keystatic>, enter your Vercel URL as the **Deployed
 App URL**, click **Create GitHub App**, and copy the four values it writes to
 `.env` into Vercel's environment variables. Redeploy. Full steps in the README.
 
-After that, `https://<project>.vercel.app/keystatic` signs you in with GitHub on
+After that, `https://rlahiri.vercel.app/keystatic` signs you in with GitHub on
 any device.
 
 ### Make it feel like an app

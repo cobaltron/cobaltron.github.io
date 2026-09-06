@@ -121,7 +121,7 @@ PUBLIC_KEYSTATIC_STORAGE=github npm run dev
 ```
 
 1. Open <http://localhost:4321/keystatic>. You'll get **Keystatic Setup**.
-2. Put your Vercel URL (`https://<project>.vercel.app`) in **Deployed App URL**.
+2. Put your Vercel URL (`https://rlahiri.vercel.app`) in **Deployed App URL**.
    Leave the organisation field blank for a personal account.
 3. **Create GitHub App** → approve on GitHub → you're redirected back and the
    secrets are written to `.env` (already gitignored — never commit it).
