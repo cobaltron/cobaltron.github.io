@@ -116,9 +116,18 @@ through the GitHub API, which needs a GitHub App.
 wizard only runs when the API route sees `NODE_ENV === 'development'`; in
 production a missing secret throws instead. So:
 
+```powershell
+# PowerShell (Windows) — note the different syntax
+$env:PUBLIC_KEYSTATIC_STORAGE = "github"; npm run dev
+```
+
 ```bash
+# bash / zsh / Git Bash
 PUBLIC_KEYSTATIC_STORAGE=github npm run dev
 ```
+
+Afterwards, `Remove-Item Env:\PUBLIC_KEYSTATIC_STORAGE` in PowerShell (or just
+close the terminal) to go back to local mode.
 
 1. Open <http://localhost:4321/keystatic>. You'll get **Keystatic Setup**.
 2. Put your Vercel URL (`https://rlahiri.vercel.app`) in **Deployed App URL**.

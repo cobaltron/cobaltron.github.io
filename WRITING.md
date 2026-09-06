@@ -193,9 +193,18 @@ browser anywhere.
 The GitHub App has to be created from your machine — Keystatic's setup wizard
 only runs in development. Once:
 
+```powershell
+# PowerShell (Windows) — note the different syntax
+$env:PUBLIC_KEYSTATIC_STORAGE = "github"; npm run dev
+```
+
 ```bash
+# bash / zsh / Git Bash
 PUBLIC_KEYSTATIC_STORAGE=github npm run dev
 ```
+
+Afterwards, `Remove-Item Env:\PUBLIC_KEYSTATIC_STORAGE` in PowerShell (or just
+close the terminal) to go back to local mode.
 
 Open <http://localhost:4321/keystatic>, enter your Vercel URL as the **Deployed
 App URL**, click **Create GitHub App**, and copy the four values it writes to

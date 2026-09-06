@@ -11,7 +11,8 @@ import { config, collection, fields, singleton } from '@keystatic/core';
  *
  * To create the GitHub App you must run in github mode LOCALLY, once:
  *
- *     PUBLIC_KEYSTATIC_STORAGE=github npm run dev
+ *     PUBLIC_KEYSTATIC_STORAGE=github npm run dev          # bash / Git Bash
+ *     $env:PUBLIC_KEYSTATIC_STORAGE = "github"; npm run dev  # PowerShell
  *
  * then open http://localhost:4321/keystatic and follow the setup prompts.
  * Keystatic writes the three secrets to a .env file — copy them into Vercel.
