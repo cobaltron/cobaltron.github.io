@@ -115,17 +115,35 @@ Links → *New link*.
 
 | Field | Required |
 |---|---|
-| `title`, `url`, `note`, `added` | **yes** |
-| `source`, `tags` | no |
+| `title`, `url`, `added` | **yes** |
+| `note` | required *to publish* |
+| `source`, `tags`, `draft` | no |
 
 Two things to know:
 
 - **`note` is the whole value of the section.** A bare URL is worthless in six
-  months. Write why it changed your mind, not what it's about.
-- **Links have no `draft` field.** Adding one publishes it. Keep it in a scratch
-  file until you're ready.
+  months. Write why it changed your mind, not what it's about. The build
+  **fails** if you publish a link without one — set `draft: true` instead.
+- **`tags` become the filter buttons** on `/links` automatically.
 
-`tags` become the filter buttons on `/links` automatically.
+### Importing X bookmarks
+
+X's official data archive does *not* include bookmarks. Use a browser-extension
+exporter to get a JSON or CSV file, then:
+
+```bash
+node scripts/import-bookmarks.mjs bookmarks.json --dry-run --limit 5   # preview
+node scripts/import-bookmarks.mjs bookmarks.json                       # import
+```
+
+Everything lands as `draft: true` with an empty note, so nothing reaches the
+site. Work through the backlog in `/keystatic` → Links: write why each one
+mattered, untick Draft, publish. Anything you never annotate simply stays
+hidden.
+
+Re-running is safe — entries are keyed by tweet id, so existing ones are
+skipped rather than duplicated or overwritten. `/links` shows a count of
+pending drafts while developing.
 
 ---
 

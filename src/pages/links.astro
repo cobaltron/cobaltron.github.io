@@ -4,10 +4,14 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import { formatDate, isoDate } from '../lib/format';
 
-const links = (await getCollection('links')).sort(
-  (a, b) => b.data.added.getTime() - a.data.added.getTime()
-);
+const all = await getCollection('links');
 
+// Drafts (imported bookmarks awaiting a note) never render in production.
+const links = all
+  .filter((l) => !l.data.draft)
+  .sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
+
+const pending = all.filter((l) => l.data.draft).length;
 const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
 ---
 
@@ -25,6 +29,13 @@ const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
 
   <section class="section">
     <div class="container container--narrow">
+      {import.meta.env.DEV && pending > 0 && (
+        <p class="pending-note">
+          {pending} draft{pending === 1 ? '' : 's'} awaiting a note — visible only in dev.
+          Add commentary in <code>/keystatic</code> and untick Draft to publish.
+        </p>
+      )}
+
       {allTags.length > 0 && (
         <div class="filters">
           <span class="filter-label">Topic</span>
@@ -68,6 +79,17 @@ const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
 </Base>
 
 <style>
+  .pending-note {
+    border: 1px dashed var(--line-hi);
+    padding: 0.9rem 1.1rem;
+    margin: 0 0 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+  .pending-note code {
+    color: var(--accent);
+  }
   .link-foot {
     display: flex;
     align-items: center;

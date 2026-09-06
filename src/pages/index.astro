@@ -24,6 +24,7 @@ const projects = published(await getCollection('projects'))
   .slice(0, 3);
 
 const links = (await getCollection('links'))
+  .filter((l) => !l.data.draft)
   .sort((a, b) => b.data.added.getTime() - a.data.added.getTime())
   .slice(0, 3);
 ---

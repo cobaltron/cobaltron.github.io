@@ -78,17 +78,32 @@ const projects = defineCollection({
  * Keystatic's collection UI writes. The entry `id` comes from the filename.
  */
 
-/** Curated links, with commentary on why each one matters. */
+/**
+ * Curated links, with commentary on why each one matters.
+ *
+ * `note` is optional so bulk imports (e.g. X bookmarks) can land as drafts,
+ * but the refine below makes it impossible to *publish* one without
+ * commentary. A bare URL is worthless six months later, and the whole point
+ * of this section is the annotation — so the build enforces it rather than
+ * relying on discipline.
+ */
 const links = defineCollection({
   loader: glob({ base: './src/content/links', pattern: '**/*.json' }),
-  schema: z.object({
-    title: z.string(),
-    url: z.string().url(),
-    source: z.string().optional(),
-    note: z.string(),
-    tags: z.array(z.string()).default([]),
-    added: z.coerce.date(),
-  }),
+  schema: z
+    .object({
+      title: z.string(),
+      url: z.string().url(),
+      source: z.string().optional(),
+      note: z.string().default(''),
+      tags: z.array(z.string()).default([]),
+      added: z.coerce.date(),
+      draft: z.boolean().default(false),
+    })
+    .refine((data) => data.draft || data.note.trim().length > 0, {
+      message:
+        'A published link needs a note explaining why it matters. Add one, or set draft: true.',
+      path: ['note'],
+    }),
 });
 
 /** Publications — carried over from the old portfolio. */

@@ -183,7 +183,7 @@ export default config({
       slugField: 'title',
       path: 'src/content/links/*',
       format: 'json',
-      columns: ['title', 'added'],
+      columns: ['title', 'draft'],
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
         url: fields.url({ label: 'URL', validation: { isRequired: true } }),
@@ -193,12 +193,17 @@ export default config({
         }),
         note: fields.text({
           label: 'Why it matters',
-          description: 'Your commentary. This is the point of the section.',
+          description:
+            'Your commentary. This is the point of the section — a link cannot be published without it.',
           multiline: true,
-          validation: { isRequired: true },
         }),
         tags,
         added: fields.date({ label: 'Added', validation: { isRequired: true } }),
+        draft: fields.checkbox({
+          label: 'Draft',
+          description: 'Hidden from the site. Imported bookmarks start here.',
+          defaultValue: false,
+        }),
       },
     }),
 
