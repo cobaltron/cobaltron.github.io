@@ -3,14 +3,33 @@ import { config, collection, fields, singleton } from '@keystatic/core';
 /**
  * Keystatic admin UI, served at /keystatic.
  *
- * Storage is local while developing (writes straight to disk). Flip `kind`
- * to 'github' once the repo is on GitHub and the env vars are set — see
- * README for the three secrets that need to exist in Vercel.
+ * STORAGE MODE
  *
- * Every field here mirrors the zod schema in src/content.config.ts. If you
+ * Local by default while developing (writes straight to disk, no auth).
+ * GitHub in production (commits via the GitHub API, so you can edit from
+ * any device, including a phone).
+ *
+ * To create the GitHub App you must run in github mode LOCALLY, once:
+ *
+ *     PUBLIC_KEYSTATIC_STORAGE=github npm run dev
+ *
+ * then open http://localhost:4321/keystatic and follow the setup prompts.
+ * Keystatic writes the three secrets to a .env file — copy them into Vercel.
+ *
+ * This detour is necessary because Keystatic's setup wizard only runs when
+ * the API route sees NODE_ENV === 'development'. In production a missing
+ * secret throws instead, which surfaces as a plain-text error the browser
+ * may download rather than display.
+ *
+ * The PUBLIC_ prefix matters: this file is bundled for both the server API
+ * route and the browser UI, and the two must agree on the storage kind.
+ *
+ * Every field below mirrors the zod schema in src/content.config.ts. If you
  * change one, change the other, or the build will fail validation.
  */
-const isProd = process.env.NODE_ENV === 'production';
+const storageKind =
+  import.meta.env.PUBLIC_KEYSTATIC_STORAGE ??
+  (import.meta.env.PROD ? 'github' : 'local');
 
 const tags = fields.array(fields.text({ label: 'Tag' }), {
   label: 'Tags',
@@ -18,12 +37,13 @@ const tags = fields.array(fields.text({ label: 'Tag' }), {
 });
 
 export default config({
-  storage: isProd
-    ? {
-        kind: 'github',
-        repo: { owner: 'cobaltron', name: 'cobaltron.github.io' },
-      }
-    : { kind: 'local' },
+  storage:
+    storageKind === 'github'
+      ? {
+          kind: 'github',
+          repo: { owner: 'cobaltron', name: 'cobaltron.github.io' },
+        }
+      : { kind: 'local' },
 
   ui: {
     brand: { name: 'cobaltron garden' },

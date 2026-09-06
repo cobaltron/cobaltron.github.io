@@ -16,6 +16,8 @@ npm run build    # production build
 
 The admin UI is at **http://localhost:4321/keystatic**.
 
+📝 **[WRITING.md](WRITING.md) — how to add notes, posts and links.**
+
 ## Content
 
 | Collection | Path | Format |
@@ -110,9 +112,20 @@ deliberately. Nothing in this project depends on it.
 Locally, Keystatic writes straight to disk — no setup. In production it commits
 through the GitHub API, which needs a GitHub App.
 
-1. Visit `https://<project-name>.vercel.app/keystatic`. Keystatic walks you
-   through creating the App and shows the values it generates.
-2. Add them in Vercel → Settings → Environment Variables:
+**The App must be created by running locally in github mode.** Keystatic's setup
+wizard only runs when the API route sees `NODE_ENV === 'development'`; in
+production a missing secret throws instead. So:
+
+```bash
+PUBLIC_KEYSTATIC_STORAGE=github npm run dev
+```
+
+1. Open <http://localhost:4321/keystatic>. You'll get **Keystatic Setup**.
+2. Put your Vercel URL (`https://<project>.vercel.app`) in **Deployed App URL**.
+   Leave the organisation field blank for a personal account.
+3. **Create GitHub App** → approve on GitHub → you're redirected back and the
+   secrets are written to `.env` (already gitignored — never commit it).
+4. Copy all four into Vercel → Settings → Environment Variables:
 
    ```
    KEYSTATIC_GITHUB_CLIENT_ID
@@ -121,11 +134,23 @@ through the GitHub API, which needs a GitHub App.
    PUBLIC_KEYSTATIC_GITHUB_APP_SLUG
    ```
 
-3. Redeploy.
+5. Redeploy.
 
-Saving from the admin UI then commits to the repo, which triggers a rebuild.
+Afterwards, plain `npm run dev` goes back to local mode (writes to disk, no
+auth). Saving from the deployed admin UI commits to the repo and triggers a
+rebuild.
+
 `keystatic.config.tsx` already points at `cobaltron/cobaltron.github.io` — update
 it if you ever rename the repo.
+
+### Troubleshooting: a downloaded `login.txt`
+
+Keystatic's API returns errors as bare strings with no `content-type`, so a
+mobile browser saves them as a file instead of displaying them. Open it — it's
+the error text, not something you need.
+
+A `login.txt` from `/api/keystatic/github/login` means the three secrets above
+aren't set in the deployed environment. Follow the steps above.
 
 ## Placeholder content to replace
 
