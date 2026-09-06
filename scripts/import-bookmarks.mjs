@@ -25,6 +25,7 @@ const OUT_DIR = path.join(process.cwd(), 'src', 'content', 'links');
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith('--'));
 const dryRun = args.includes('--dry-run');
+const overwrite = args.includes('--overwrite');
 const limitArg = args.indexOf('--limit');
 const limit = limitArg !== -1 ? Number(args[limitArg + 1]) : Infinity;
 
@@ -35,6 +36,8 @@ Usage: node scripts/import-bookmarks.mjs <export-file> [--limit N] [--dry-run]
   <export-file>  JSON or CSV from any X bookmarks exporter
   --limit N      only import the first N (try --limit 5 --dry-run first)
   --dry-run      show what would be written, write nothing
+  --overwrite    refresh existing entries' title/url/source, keeping your
+                 note, tags and draft status. Use after re-exporting.
 `);
   process.exit(1);
 }
@@ -104,6 +107,30 @@ console.log(`Read ${records.length} record(s) from ${path.basename(file)}\n`);
 
 /* ---------- field sniffing ---------- */
 
+/**
+ * Repair UTF-8 that was written out as Latin-1 ("dÃ¼n" -> "dün").
+ * Common in bookmark exporters. Only attempted when every code point is in
+ * the Latin-1 range and the reinterpreted bytes are valid UTF-8 — otherwise
+ * the text is left exactly as-is rather than risking corruption.
+ */
+function repairMojibake(value) {
+  if (!value) return value;
+  if (!/[À-ÿ]/.test(value)) return value;
+  for (let i = 0; i < value.length; i++) {
+    if (value.charCodeAt(i) > 255) return value;
+  }
+  const bytes = Uint8Array.from(value, (c) => c.charCodeAt(0));
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    // Not cleanly decodable as a whole -- usually a truncated or mangled
+    // sequence somewhere. Accept a lenient decode only if it loses nothing,
+    // otherwise leave the original untouched.
+    const lenient = new TextDecoder('utf-8').decode(bytes);
+    return lenient.includes('�') ? value : lenient;
+  }
+}
+
 const pick = (obj, names) => {
   for (const n of names) {
     for (const key of Object.keys(obj)) {
@@ -119,10 +146,23 @@ const pick = (obj, names) => {
 const F = {
   url: ['url', 'tweeturl', 'link', 'permalink', 'tweetlink', 'href', 'statusurl'],
   text: ['text', 'fulltext', 'tweettext', 'content', 'body', 'tweet'],
-  author: ['author', 'screenname', 'username', 'handle', 'user', 'authorhandle', 'name'],
+  // 'userscreenname' first: exports often carry both a handle and a display
+  // name, and the handle is what matches the tweet URL.
+  author: [
+    'userscreenname', 'screenname', 'authorhandle', 'handle',
+    'author', 'username', 'user', 'name',
+  ],
   date: ['bookmarkedat', 'createdat', 'date', 'time', 'timestamp', 'tweetdate', 'added'],
-  id: ['id', 'tweetid', 'idstr', 'statusid', 'restid'],
+  id: ['tweetid', 'id', 'idstr', 'statusid', 'restid'],
+  expanded: ['expandedurls', 'expandedurl', 'outboundurls', 'urls'],
+  hashtags: ['hashtags'],
 };
+
+function authorHandle(rec) {
+  const raw = pick(rec, F.author);
+  if (!raw) return undefined;
+  return raw.startsWith('@') ? raw : `@${raw}`;
+}
 
 function tweetUrl(rec) {
   const url = pick(rec, F.url);
@@ -141,13 +181,25 @@ function tweetId(rec) {
 }
 
 function makeTitle(rec) {
-  let text = (pick(rec, F.text) ?? '')
-    .replace(/https?:\/\/\S+/g, '')      // strip URLs
+  let text = repairMojibake(pick(rec, F.text) ?? '')
+    .replace(/https?:\/\/\S+/g, '')       // strip URLs, incl. t.co
+    .replace(/^(?:@\w+[\s,]*)+/, '')       // leading @mentions on replies
     .replace(/\s+/g, ' ')
     .trim();
+
   if (!text) {
-    const author = pick(rec, F.author);
-    return author ? `Bookmark from ${author.startsWith('@') ? author : '@' + author}` : 'Bookmark';
+    // A bare-link tweet. Name it after where it points.
+    const expanded = (pick(rec, F.expanded) ?? '').split(/\s+/).filter(Boolean);
+    const author = authorHandle(rec);
+    if (expanded.length > 0) {
+      try {
+        const host = new URL(expanded[0]).hostname.replace(/^www\./, '');
+        return author ? `${host} — shared by ${author}` : host;
+      } catch {
+        /* unparseable URL; fall through */
+      }
+    }
+    return author ? `Bookmark from ${author}` : 'Bookmark';
   }
   if (text.length > 90) {
     // cut on a word boundary
@@ -204,7 +256,7 @@ for (const rec of records) {
   }
 
   const key = url.replace(/\/$/, '');
-  if (existingUrls.has(key) || seen.has(key)) {
+  if (seen.has(key) || (existingUrls.has(key) && !overwrite)) {
     skipped++;
     continue;
   }
@@ -212,20 +264,37 @@ for (const rec of records) {
 
   const id = tweetId(rec);
   const title = makeTitle(rec);
-  const author = pick(rec, F.author);
+  const author = authorHandle(rec);
+
+  const tags = (pick(rec, F.hashtags) ?? '')
+    .split(/[\s,]+/)
+    .map((t) => t.replace(/^#/, '').trim().toLowerCase())
+    .filter(Boolean);
 
   const entry = {
     title,
     url,
-    ...(author ? { source: author.startsWith('@') ? author : `@${author}` } : {}),
+    ...(author ? { source: author } : {}),
     note: '',
-    tags: [],
+    tags,
     added: parseDate(rec),
     draft: true,
   };
 
   const name = `${id ? `tweet-${id}` : slugify(title)}.json`;
   const dest = path.join(OUT_DIR, name);
+
+  // Never clobber work already done: an existing note/tags/draft wins.
+  if (overwrite && fs.existsSync(dest)) {
+    try {
+      const prev = JSON.parse(fs.readFileSync(dest, 'utf8'));
+      if (prev.note) entry.note = prev.note;
+      if (Array.isArray(prev.tags) && prev.tags.length) entry.tags = prev.tags;
+      if (typeof prev.draft === 'boolean') entry.draft = prev.draft;
+    } catch {
+      /* unreadable; just write the fresh entry */
+    }
+  }
 
   if (dryRun) {
     console.log(`would write ${name}`);
