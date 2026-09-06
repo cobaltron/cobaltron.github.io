@@ -433,8 +433,9 @@ a:hover {
 .portrait canvas {
   position: absolute;
   inset: 0;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+  /* The portrait's centre is a real photograph now, so it must resample
+     smoothly. Only the hero field (.dither-field) stays pixelated. */
+  image-rendering: auto;
   opacity: 0;
   transition: opacity 0.6s var(--ease);
 }

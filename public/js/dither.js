@@ -57,12 +57,6 @@
     72, 222, 246     // accent
   ];
 
-  var PORTRAIT = [
-    10, 10, 10,
-    16, 62, 72,
-    62, 176, 198,
-    235, 250, 253
-  ];
 
   /* ---------- hero field ---------- */
 
@@ -152,60 +146,73 @@
 
   HeroField.prototype.stop = function () { this.running = false; };
 
-  /* ---------- portrait: Floyd–Steinberg into a duotone ramp ---------- */
+  /* ---------- portrait: sharp face dissolving into an ordered dither ------ */
 
+  /*
+   * The face renders photographically; an ordered dither ramps in toward the
+   * edges and the surround falls away to black.
+   *
+   * Dithering the whole frame (the previous treatment) turned the flat studio
+   * backdrop into a field of noise louder than the subject — the texture was
+   * describing the least interesting part of the picture. Confining it to the
+   * edge keeps the site's visual language while leaving the face readable.
+   */
   function ditherPortrait(img, canvas) {
     var ctx = canvas.getContext('2d');
     if (!ctx) return false;
 
-    var cell = 3;
     var box = canvas.getBoundingClientRect();
-    var w = Math.max(1, Math.round((box.width || 320) / cell));
-    var h = Math.max(1, Math.round(w * (img.naturalHeight / img.naturalWidth)));
+    // 1.5x the display box: keeps the face crisp while the dithered ring
+    // still resolves as discrete dots rather than smooth grain.
+    var W = Math.max(120, Math.round((box.width || 240) * 1.5));
 
-    canvas.width = w;
-    canvas.height = h;
+    canvas.width = W;
+    canvas.height = W;
     ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(img, 0, 0, w, h);
+    ctx.drawImage(img, 0, 0, W, W);
 
     var image;
     try {
-      image = ctx.getImageData(0, 0, w, h);
+      image = ctx.getImageData(0, 0, W, W);
     } catch (e) {
       return false; // tainted canvas (file:// in some browsers)
     }
 
-    var src = image.data;
-    /* luminance buffer, with a contrast lift so the dither has range to work with */
-    var lum = new Float32Array(w * h);
-    for (var i = 0, j = 0; i < src.length; i += 4, j++) {
-      var l = (0.299 * src[i] + 0.587 * src[i + 1] + 0.114 * src[i + 2]) / 255;
-      l = (l - 0.5) * 1.25 + 0.52;
-      lum[j] = l < 0 ? 0 : l > 1 ? 1 : l;
-    }
+    var d = image.data;
+    var cx = W * 0.5;
+    var cy = W * 0.46;          // the face sits a little above centre
+    var r0 = W * 0.26;          // clean inside this radius
+    var r1 = W * 0.5;           // fully dithered beyond it
+    var LO = [10, 10, 10];      // page ground
+    var HI = [224, 247, 252];   // cool highlight, a touch toward the accent
 
-    var levels = 4, maxIdx = levels - 1;
-    for (var y = 0; y < h; y++) {
-      for (var x = 0; x < w; x++) {
-        var k = y * w + x;
-        var old = lum[k];
-        var idx = Math.round(old * maxIdx);
-        idx = idx < 0 ? 0 : idx > maxIdx ? maxIdx : idx;
-        var err = old - idx / maxIdx;
+    for (var y = 0; y < W; y++) {
+      var by = (y & 7) << 3;
+      for (var x = 0; x < W; x++) {
+        var k = (y * W + x) << 2;
 
-        var c = idx * 3, p = k << 2;
-        src[p] = PORTRAIT[c];
-        src[p + 1] = PORTRAIT[c + 1];
-        src[p + 2] = PORTRAIT[c + 2];
-        src[p + 3] = 255;
+        var l = (0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2]) / 255;
+        l = (l - 0.5) * 1.16 + 0.5;
+        l = l < 0 ? 0 : l > 1 ? 1 : l;
 
-        /* diffuse the quantisation error to the neighbours */
-        if (x + 1 < w) lum[k + 1] += err * 0.4375;
-        if (y + 1 < h) {
-          if (x > 0) lum[k + w - 1] += err * 0.1875;
-          lum[k + w] += err * 0.3125;
-          if (x + 1 < w) lum[k + w + 1] += err * 0.0625;
-        }
+        var dx = x - cx;
+        var dy = (y - cy) * 0.92;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var t = dist <= r0 ? 0 : dist >= r1 ? 1 : (dist - r0) / (r1 - r0);
+        t = t * t * (3 - 2 * t);
+
+        l *= 1 - t * 0.9;       // surround dissolves into the page
+
+        // Amplitude must be 1/(levels-1), not 0.5 — anything larger lifts the
+        // darkened surround into a grey halo instead of letting it dissolve.
+        var v = l + ((BAYER[by + (x & 7)] - 0.5) / 3) * t;
+        v = v < 0 ? 0 : v > 1 ? 1 : v;
+        if (t > 0.06) v = Math.round(v * 3) / 3;  // quantise only where dithered
+
+        d[k] = LO[0] + (HI[0] - LO[0]) * v;
+        d[k + 1] = LO[1] + (HI[1] - LO[1]) * v;
+        d[k + 2] = LO[2] + (HI[2] - LO[2]) * v;
+        d[k + 3] = 255;
       }
     }
 
