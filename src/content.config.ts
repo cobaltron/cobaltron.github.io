@@ -150,8 +150,36 @@ const pages = defineCollection({
   schema: z.object({
     title: z.string(),
     updated: z.coerce.date().optional(),
+    handle: z.string().optional(),
   }),
 });
 
-export const collections = { notes, posts, projects, links, publications, achievements, roles, pages };
+/** Instagram posts embedded on /photography. */
+const photos = defineCollection({
+  loader: glob({ base: './src/content/photos', pattern: '**/*.json' }),
+  schema: z.object({
+    url: z
+      .string()
+      .url()
+      .refine((u) => /instagram\.com\/(p|reel|tv)\//.test(u), {
+        message:
+          'Must be a public Instagram post/reel URL, e.g. https://www.instagram.com/p/ABC123/',
+      }),
+    caption: z.string().optional(),
+    order: z.number().default(99),
+  }),
+});
+
+export const collections = {
+  notes,
+  posts,
+  projects,
+  links,
+  publications,
+  achievements,
+  roles,
+  pages,
+  photos,
+};
+
 

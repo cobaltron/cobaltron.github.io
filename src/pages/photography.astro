@@ -1,0 +1,191 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+
+const page = await getEntry('pages', 'photography');
+const Content = page ? (await render(page)).Content : null;
+const handle = page?.data.handle;
+
+const photos = (await getCollection('photos')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base
+  title="Photography"
+  description="Photography and videography — a hobby, and a counterweight to work that is mostly abstraction."
+>
+  <Hero eyebrow="Off the clock" compact>
+    <h1>Photography</h1>
+    <p class="hero-lead">
+      The hobby that stuck. Stills and video, shot for no reason other than
+      liking the way light behaves.
+    </p>
+    {
+      handle && (
+        <div class="hero-actions">
+          <a
+            class="btn"
+            href={`https://www.instagram.com/${handle}/`}
+            target="_blank"
+            rel="noopener"
+          >
+            <i class="fab fa-instagram" /> @{handle}
+          </a>
+        </div>
+      )
+    }
+  </Hero>
+
+  {
+    Content && (
+      <section class="section section--tight">
+        <div class="container container--read">
+          <div class="prose">
+            <Content />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" id="gram">
+    <div class="container container--narrow">
+      <div class="section-head">
+        <p class="section-index"><span>01</span> Recent</p>
+        <h2 class="section-title">From Instagram</h2>
+        <p class="section-sub">
+          Posts load from Instagram when you scroll here — nothing from Meta is
+          requested on any other page.
+        </p>
+      </div>
+
+      {
+        photos.length === 0 ? (
+          <div class="empty">
+            <p>No posts selected yet.</p>
+            <p>
+              Add Instagram post URLs at <code>/keystatic</code> → Instagram posts.
+            </p>
+          </div>
+        ) : (
+          <div class="gram-grid">
+            {photos.map((photo) => (
+              <figure class="gram-item">
+                {/*
+                  Instagram's embed.js replaces this blockquote in place. The
+                  inner link is the fallback if the script is blocked or fails,
+                  so the post is always reachable.
+                */}
+                <blockquote
+                  class="instagram-media"
+                  data-instgrm-permalink={photo.data.url}
+                  data-instgrm-version="14"
+                >
+                  <a href={photo.data.url} target="_blank" rel="noopener">
+                    View this post on Instagram
+                  </a>
+                </blockquote>
+                {photo.data.caption && <figcaption>{photo.data.caption}</figcaption>}
+              </figure>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        handle && (
+          <a
+            class="section-more"
+            href={`https://www.instagram.com/${handle}/`}
+            target="_blank"
+            rel="noopener"
+          >
+            More on Instagram →
+          </a>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .gram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.75rem;
+    align-items: start;
+  }
+  .gram-item {
+    margin: 0;
+    min-width: 0;
+  }
+  /* Instagram injects a light-themed iframe we can't restyle. Sit it on a
+     surface with the site's hairline so it reads as a deliberate frame
+     rather than a stray white rectangle. */
+  .gram-item :global(.instagram-media) {
+    margin: 0 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    border: 1px solid var(--line-hi) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  .gram-item figcaption {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    margin-top: 0.85rem;
+    padding-left: 0.9rem;
+    border-left: 1px solid var(--line-hi);
+  }
+  /* Fallback styling for the bare blockquote before/without the script. */
+  .gram-item :global(blockquote.instagram-media a) {
+    display: block;
+    padding: 2.5rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-align: center;
+    background: var(--surface);
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  /*
+   * Load Instagram's embed script only when the section is actually reached.
+   * It is ~100KB and sets Meta cookies, so it should not run for people who
+   * never scroll this far — and never on any other page.
+   */
+  const section = document.getElementById('gram');
+  const hasEmbeds = document.querySelector('.instagram-media');
+
+  if (section && hasEmbeds) {
+    const load = () => {
+      if (document.getElementById('ig-embed-script')) return;
+      const script = document.createElement('script');
+      script.id = 'ig-embed-script';
+      script.async = true;
+      script.src = 'https://www.instagram.com/embed.js';
+      script.onload = () => {
+        // @ts-expect-error — injected by embed.js
+        window.instgrm?.Embeds?.process();
+      };
+      document.body.appendChild(script);
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect();
+            load();
+          }
+        },
+        { rootMargin: '300px' }
+      );
+      io.observe(section);
+    } else {
+      load();
+    }
+  }
+</script>

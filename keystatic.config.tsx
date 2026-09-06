@@ -52,9 +52,9 @@ export default config({
       Garden: ['notes'],
       Writing: ['posts'],
       Work: ['projects', 'roles'],
-      Collected: ['links'],
+      Collected: ['links', 'photos'],
       Archive: ['publications', 'achievements'],
-      Pages: ['about', 'now'],
+      Pages: ['about', 'now', 'photography'],
     },
   },
 
@@ -207,6 +207,29 @@ export default config({
       },
     }),
 
+    photos: collection({
+      label: 'Instagram posts',
+      slugField: 'url',
+      path: 'src/content/photos/*',
+      format: 'json',
+      columns: ['url'],
+      schema: {
+        url: fields.slug({
+          name: {
+            label: 'Instagram post URL',
+            description:
+              'Paste the post link, e.g. https://www.instagram.com/p/ABC123/ — must be public.',
+          },
+        }),
+        caption: fields.text({
+          label: 'Caption',
+          description: 'Optional. Shown beneath the embed in your own words.',
+          multiline: true,
+        }),
+        order: fields.integer({ label: 'Sort order', defaultValue: 99 }),
+      },
+    }),
+
     publications: collection({
       label: 'Publications',
       slugField: 'title',
@@ -281,6 +304,24 @@ export default config({
         updated: fields.date({ label: 'Last updated' }),
         content: fields.mdx({
           label: 'Body',
+          options: { image: { directory: 'public/img/content', publicPath: '/img/content/' } },
+        }),
+      },
+    }),
+
+    photography: singleton({
+      label: 'Photography page',
+      path: 'src/content/pages/photography',
+      format: { contentField: 'content' },
+      entryLayout: 'content',
+      schema: {
+        title: fields.text({ label: 'Title', defaultValue: 'Photography' }),
+        handle: fields.text({
+          label: 'Instagram handle',
+          description: 'Without the @, e.g. rajarshi.shoots',
+        }),
+        content: fields.mdx({
+          label: 'Intro',
           options: { image: { directory: 'public/img/content', publicPath: '/img/content/' } },
         }),
       },
