@@ -419,6 +419,7 @@ a:hover {
   width: clamp(170px, 22vw, 240px);
   aspect-ratio: 1;
   border: 1px solid var(--line-hi);
+  border-radius: 14px;
   background: var(--bg);
   overflow: hidden;
   flex: none;
@@ -447,6 +448,7 @@ a:hover {
   position: absolute;
   inset: 0;
   border: 1px solid rgba(34, 211, 238, 0.18);
+  border-radius: inherit;
   pointer-events: none;
 }
 

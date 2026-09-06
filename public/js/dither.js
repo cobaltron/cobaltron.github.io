@@ -146,25 +146,24 @@
 
   HeroField.prototype.stop = function () { this.running = false; };
 
-  /* ---------- portrait: sharp face dissolving into an ordered dither ------ */
+  /* ---------- portrait: colour dither on the face, muted surround -------- */
 
   /*
-   * The face renders photographically; an ordered dither ramps in toward the
-   * edges and the surround falls away to black.
+   * Ordered dither applied per RGB channel, so the photograph keeps its own
+   * colour instead of being flattened to a duotone. The dither cell is two
+   * device pixels: coarse enough to read as texture, fine enough that the
+   * face stays legible.
    *
-   * Dithering the whole frame (the previous treatment) turned the flat studio
-   * backdrop into a field of noise louder than the subject — the texture was
-   * describing the least interesting part of the picture. Confining it to the
-   * edge keeps the site's visual language while leaving the face readable.
+   * The surround is desaturated and darkened rather than crushed to black —
+   * muted, so the portrait still sits in a frame instead of dissolving.
    */
   function ditherPortrait(img, canvas) {
     var ctx = canvas.getContext('2d');
     if (!ctx) return false;
 
     var box = canvas.getBoundingClientRect();
-    // 1.5x the display box: keeps the face crisp while the dithered ring
-    // still resolves as discrete dots rather than smooth grain.
-    var W = Math.max(120, Math.round((box.width || 240) * 1.5));
+    var display = Math.max(120, Math.round(box.width || 240));
+    var W = display * 2;          // 2x so the underlying photo stays sharp
 
     canvas.width = W;
     canvas.height = W;
@@ -180,20 +179,18 @@
 
     var d = image.data;
     var cx = W * 0.5;
-    var cy = W * 0.46;          // the face sits a little above centre
-    var r0 = W * 0.26;          // clean inside this radius
-    var r1 = W * 0.5;           // fully dithered beyond it
-    var LO = [10, 10, 10];      // page ground
-    var HI = [224, 247, 252];   // cool highlight, a touch toward the accent
+    var cy = W * 0.44;            // the face sits a little above centre
+    var r0 = W * 0.26;            // full colour inside this radius
+    var r1 = W * 0.50;            // fully muted beyond it
+
+    var MAX = 5;                  // 6 luminance levels: visible, not banded
+    var STEP = 255 / MAX;
 
     for (var y = 0; y < W; y++) {
-      var by = (y & 7) << 3;
+      var by = ((y >> 2) & 7) << 3;   // 2 display px per dither cell
       for (var x = 0; x < W; x++) {
         var k = (y * W + x) << 2;
-
-        var l = (0.299 * d[k] + 0.587 * d[k + 1] + 0.114 * d[k + 2]) / 255;
-        l = (l - 0.5) * 1.16 + 0.5;
-        l = l < 0 ? 0 : l > 1 ? 1 : l;
+        var r = d[k], g = d[k + 1], b = d[k + 2];
 
         var dx = x - cx;
         var dy = (y - cy) * 0.92;
@@ -201,17 +198,41 @@
         var t = dist <= r0 ? 0 : dist >= r1 ? 1 : (dist - r0) / (r1 - r0);
         t = t * t * (3 - 2 * t);
 
-        l *= 1 - t * 0.9;       // surround dissolves into the page
+        var thr = (BAYER[by + ((x >> 2) & 7)] - 0.5) * STEP;
 
-        // Amplitude must be 1/(levels-1), not 0.5 — anything larger lifts the
-        // darkened surround into a grey halo instead of letting it dissolve.
-        var v = l + ((BAYER[by + (x & 7)] - 0.5) / 3) * t;
-        v = v < 0 ? 0 : v > 1 ? 1 : v;
-        if (t > 0.06) v = Math.round(v * 3) / 3;  // quantise only where dithered
+        var lum = 0.299 * r + 0.587 * g + 0.114 * b;
 
-        d[k] = LO[0] + (HI[0] - LO[0]) * v;
-        d[k + 1] = LO[1] + (HI[1] - LO[1]) * v;
-        d[k + 2] = LO[2] + (HI[2] - LO[2]) * v;
+        // Mute outward: drain colour toward grey, then dim hard. The studio
+        // backdrop is light, so it needs real darkening or it becomes the
+        // brightest thing on a dark page.
+        var desat = t * 0.95;
+        r += (lum - r) * desat;
+        g += (lum - g) * desat;
+        b += (lum - b) * desat;
+
+        var dim = 1 - t * 0.93;
+        r *= dim; g *= dim; b *= dim;
+
+        // Recompute after muting, then lift contrast a little on the face.
+        lum = 0.299 * r + 0.587 * g + 0.114 * b;
+        var target = (lum - 128) * 1.12 + 132;
+
+        /*
+         * Dither the luminance and carry the original colour through, rather
+         * than dithering each channel. Per-channel dithering speckles chroma
+         * noise across skin, which reads as compression artefacts instead of
+         * texture.
+         */
+        var q = Math.round((target + thr) / STEP);
+        q = q < 0 ? 0 : q > MAX ? MAX : q;
+        var lit = q * STEP;
+
+        var scale = lum > 3 ? lit / lum : 0;
+        r *= scale; g *= scale; b *= scale;
+
+        d[k] = r < 0 ? 0 : r > 255 ? 255 : r;
+        d[k + 1] = g < 0 ? 0 : g > 255 ? 255 : g;
+        d[k + 2] = b < 0 ? 0 : b > 255 ? 255 : b;
         d[k + 3] = 255;
       }
     }
