@@ -1,18 +1,13 @@
 ---
 interface Props {
-  eyebrow?: string;
   compact?: boolean;
-  /** Render the animated dither field behind the band. */
-  field?: boolean;
 }
 
-const { eyebrow, compact = false, field = true } = Astro.props;
+const { compact = false } = Astro.props;
 ---
 
 <section class:list={['hero', { 'hero--compact': compact }]}>
-  {field && <canvas class="dither-field" aria-hidden="true"></canvas>}
   <div class="container">
-    {eyebrow && <p class="hero-eyebrow">{eyebrow}</p>}
     <slot />
   </div>
 </section>

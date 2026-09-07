@@ -1,12 +1,24 @@
-/* dither.js — ordered + error-diffusion dithering for the hero field and portrait.
-   No dependencies. Everything degrades to plain markup if canvas is unavailable. */
+/* dither.js — ordered dithering as the site's one reproduction material.
+ *
+ * Dithering simulates tones a limited palette cannot hold. That only means
+ * something when there is a real image to reproduce, so this runs on
+ * photographs and nothing else: no procedural fields, no animated noise.
+ *
+ * Every dithered surface shares one dot pitch (--dither-cell) and one ink ramp
+ * (--ink-0 … --ink-4), both read from CSS so the palette is defined once. The
+ * pitch is enforced by the backing store: the canvas is sized in dots, not
+ * pixels, and CSS scales it up with image-rendering: pixelated. That makes the
+ * dot size independent of device pixel ratio and identical on every element.
+ *
+ * Degrades to the undithered <img> if canvas is unavailable or the pixels
+ * cannot be read.
+ */
 (function () {
   'use strict';
 
-  var REDUCED = window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* 8x8 Bayer ordered-dither matrix, normalised to [0,1). */
+  /* 8x8 Bayer ordered-dither matrix, normalised to [0,1). Ordered rather than
+     error-diffused on purpose: the crosshatch is the recognisable artefact,
+     and it stays stable across resizes where diffusion would reflow. */
   var BAYER = [
      0, 32,  8, 40,  2, 34, 10, 42,
     48, 16, 56, 24, 50, 18, 58, 26,
@@ -18,287 +30,210 @@
     63, 31, 55, 23, 61, 29, 53, 21
   ].map(function (v) { return v / 64; });
 
-  /* ---------- value noise ---------- */
+  /* ---------- palette, read once from CSS ---------- */
 
-  function hash(x, y) {
-    /* unsigned shifts matter: with >> the sign bit is duplicated into the
-       xor and always cancels, capping the output at 0.5 */
-    var n = (x * 374761393 + y * 668265263) | 0;
-    n = ((n ^ (n >>> 13)) * 1274126177) | 0;
-    return ((n ^ (n >>> 16)) >>> 0) / 4294967295;
-  }
-
-  function smooth(t) { return t * t * (3 - 2 * t); }
-
-  function noise2(x, y) {
-    var xi = Math.floor(x), yi = Math.floor(y);
-    var xf = smooth(x - xi), yf = smooth(y - yi);
-    var a = hash(xi, yi), b = hash(xi + 1, yi);
-    var c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
-    return (a + (b - a) * xf) + ((c + (d - c) * xf) - (a + (b - a) * xf)) * yf;
-  }
-
-  function fbm(x, y) {
-    var sum = 0, amp = 0.5, freq = 1;
-    for (var o = 0; o < 4; o++) {
-      sum += noise2(x * freq, y * freq) * amp;
-      freq *= 2.07;
-      amp *= 0.5;
+  function parseColor(value) {
+    var s = (value || '').trim();
+    var hex = s.match(/^#([0-9a-f]{6})$/i);
+    if (hex) {
+      var n = parseInt(hex[1], 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
     }
-    return sum / 0.9375; // normalise the octave sum back to [0,1]
+    var rgb = s.match(/^rgba?\(([^)]+)\)$/i);
+    if (rgb) {
+      var parts = rgb[1].split(/[,\s/]+/);
+      return [+parts[0] || 0, +parts[1] || 0, +parts[2] || 0];
+    }
+    return null;
   }
 
-  /* ---------- palettes (flat RGB triplets) ---------- */
+  var config = null;
 
-  var FIELD = [
-    10, 10, 10,      // ground
-    18, 62, 70,      // deep cyan shadow
-    32, 142, 160,    // mid cyan
-    72, 222, 246     // accent
-  ];
+  function readConfig() {
+    if (config) return config;
+    var root = getComputedStyle(document.documentElement);
 
+    var inks = [];
+    for (var i = 0; i < 8; i++) {
+      var c = parseColor(root.getPropertyValue('--ink-' + i));
+      if (!c) break;
+      inks.push(c);
+    }
+    /* Fallback ramp keeps the page correct if the stylesheet has not parsed. */
+    if (inks.length < 2) {
+      inks = [[7, 11, 9], [30, 47, 34], [65, 97, 63], [132, 168, 119], [223, 227, 207]];
+    }
 
-  /* ---------- hero field ---------- */
+    var cell = parseFloat(root.getPropertyValue('--dither-cell')) || 3;
 
-  function HeroField(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext('2d', { alpha: false });
-    this.cell = 4;              // css px per dither dot
-    this.t = 0;
-    this.running = false;
-    this.last = 0;
-    this.visible = true;
-    if (!this.ctx) return;
-    this.ctx.imageSmoothingEnabled = false;
-    this.resize();
+    config = { inks: inks, cell: Math.max(1, cell) };
+    return config;
   }
 
-  HeroField.prototype.resize = function () {
-    var rect = this.canvas.getBoundingClientRect();
-    this.w = Math.max(1, Math.ceil(rect.width / this.cell));
-    this.h = Math.max(1, Math.ceil(rect.height / this.cell));
-    this.canvas.width = this.w;
-    this.canvas.height = this.h;
-    this.image = this.ctx.createImageData(this.w, this.h);
-    this.draw();
-  };
+  /* ---------- the dither ---------- */
 
-  HeroField.prototype.draw = function () {
-    var w = this.w, h = this.h, d = this.image.data, t = this.t;
-    var levels = 4, maxIdx = levels - 1;
-    var cx = w * 0.5, cy = h * 0.5;
-    var inv = 1 / Math.max(cx, cy);
+  /*
+   * A true palette dither: the output contains only ramp colours. Luminance is
+   * quantised with the Bayer threshold applied *before* rounding, so the
+   * crosshatch appears in the mid-tones where the ramp cannot hold the value —
+   * which is the whole point of the technique, and where the previous version
+   * lost it by quantising luminance and then rescaling the original RGB.
+   */
+  function render(img, canvas) {
+    var cfg = readConfig();
+    var box = img.getBoundingClientRect();
+    var cssW = box.width || img.naturalWidth;
+    var cssH = box.height || img.naturalHeight;
+    if (!cssW || !cssH) return false;
+
+    /* Backing store measured in dots. CSS stretches it back up, so one dot is
+       always cfg.cell CSS pixels wide regardless of screen density. */
+    var w = Math.max(1, Math.round(cssW / cfg.cell));
+    var h = Math.max(1, Math.round(cssH / cfg.cell));
+
+    var ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) return false;
+
+    canvas.width = w;
+    canvas.height = h;
+
+    /* Downscale through the browser's own filter, which box-averages, so each
+       dot decides from the whole area it covers instead of one sampled pixel. */
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    /* Cover, not stretch: match the CSS object-fit the element is laid out with. */
+    var sw = img.naturalWidth, sh = img.naturalHeight;
+    var scale = Math.max(w / sw, h / sh);
+    var dw = sw * scale, dh = sh * scale;
+    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+
+    var frame;
+    try {
+      frame = ctx.getImageData(0, 0, w, h);
+    } catch (e) {
+      return false; /* tainted canvas — file:// in some browsers */
+    }
+
+    var d = frame.data;
+    var inks = cfg.inks;
+    var top = inks.length - 1;
+
+    /* A vignette suits a portrait, where there is one subject to hold the
+       centre. On a wide group shot the same curve crushes the people at the
+       edges and blows the middle, so it is opt-in per image rather than a
+       property of the material. */
+    var portrait = img.getAttribute('data-dither') === 'portrait';
+    var cx = w * 0.5, cy = h * 0.46;
+    var r0 = Math.max(w, h) * 0.30;
+    var r1 = Math.max(w, h) * 0.62;
+
+    /* Flat images take a gentler lift: they arrive already exposed, and the
+       portrait's curve pushes their highlights into the top ink. */
+    var gain = portrait ? 1.22 : 1.1;
+    var pivot = portrait ? 0.46 : 0.5;
 
     for (var y = 0; y < h; y++) {
       var by = (y & 7) << 3;
       for (var x = 0; x < w; x++) {
-        /* drifting cloud field */
-        var v = fbm(x * 0.035 + t * 0.15, y * 0.055 - t * 0.08);
+        var k = (y * w + x) << 2;
 
-        /* a slow horizontal wave keeps it from reading as static noise */
-        v += 0.10 * Math.sin(x * 0.05 + t * 0.6 + y * 0.02);
+        var lum = (0.2126 * d[k] + 0.7152 * d[k + 1] + 0.0722 * d[k + 2]) / 255;
 
-        /* radial falloff so the field dissolves into the page ground */
-        var dx = (x - cx) * inv, dy = (y - cy) * inv;
-        var r = Math.sqrt(dx * dx + dy * dy);
-        var fall = 1.35 - r * 0.8;
-        v *= fall < 0 ? 0 : fall > 1 ? 1 : fall;
+        if (portrait) {
+          var dx = x - cx, dy = (y - cy) * 0.94;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          var t = dist <= r0 ? 0 : dist >= r1 ? 1 : (dist - r0) / (r1 - r0);
+          t = t * t * (3 - 2 * t);
+          lum *= 1 - t * 0.58;
+        }
 
-        /* contrast stretch — value noise clusters around 0.5 and would
-           otherwise quantise almost entirely into the ground level.
-           These constants give roughly a 66/27/6/1 split across the ramp. */
-        v = (v - 0.35) * 1.7;
-        v = v < 0 ? 0 : v > 1 ? 1 : v;
+        /* Lift contrast around mid-grey so the five inks span the subject
+           instead of piling into the middle two. */
+        lum = (lum - 0.5) * gain + pivot;
 
-        /* ordered dither into the palette */
-        var q = v * maxIdx + (BAYER[by + (x & 7)] - 0.5);
+        var q = lum * top + (BAYER[by + (x & 7)] - 0.5);
         var idx = Math.round(q);
-        idx = idx < 0 ? 0 : idx > maxIdx ? maxIdx : idx;
+        idx = idx < 0 ? 0 : idx > top ? top : idx;
 
-        var p = (y * w + x) << 2, c = idx * 3;
-        d[p] = FIELD[c];
-        d[p + 1] = FIELD[c + 1];
-        d[p + 2] = FIELD[c + 2];
-        d[p + 3] = 255;
-      }
-    }
-    this.ctx.putImageData(this.image, 0, 0);
-  };
-
-  HeroField.prototype.frame = function (now) {
-    if (!this.running) return;
-    /* throttle to ~15fps — the chunky look wants a low frame rate anyway */
-    if (now - this.last > 66) {
-      this.last = now;
-      this.t += 0.05;
-      this.draw();
-    }
-    var self = this;
-    requestAnimationFrame(function (n) { self.frame(n); });
-  };
-
-  HeroField.prototype.start = function () {
-    if (this.running || !this.ctx) return;
-    this.running = true;
-    var self = this;
-    requestAnimationFrame(function (n) { self.frame(n); });
-  };
-
-  HeroField.prototype.stop = function () { this.running = false; };
-
-  /* ---------- portrait: colour dither on the face, muted surround -------- */
-
-  /*
-   * Ordered dither applied per RGB channel, so the photograph keeps its own
-   * colour instead of being flattened to a duotone. The dither cell is two
-   * device pixels: coarse enough to read as texture, fine enough that the
-   * face stays legible.
-   *
-   * The surround is desaturated and darkened rather than crushed to black —
-   * muted, so the portrait still sits in a frame instead of dissolving.
-   */
-  function ditherPortrait(img, canvas) {
-    var ctx = canvas.getContext('2d');
-    if (!ctx) return false;
-
-    var box = canvas.getBoundingClientRect();
-    var display = Math.max(120, Math.round(box.width || 240));
-    var W = display * 2;          // 2x so the underlying photo stays sharp
-
-    canvas.width = W;
-    canvas.height = W;
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(img, 0, 0, W, W);
-
-    var image;
-    try {
-      image = ctx.getImageData(0, 0, W, W);
-    } catch (e) {
-      return false; // tainted canvas (file:// in some browsers)
-    }
-
-    var d = image.data;
-    var cx = W * 0.5;
-    var cy = W * 0.44;            // the face sits a little above centre
-    var r0 = W * 0.26;            // full colour inside this radius
-    var r1 = W * 0.50;            // fully muted beyond it
-
-    var MAX = 5;                  // 6 luminance levels: visible, not banded
-    var STEP = 255 / MAX;
-
-    for (var y = 0; y < W; y++) {
-      var by = ((y >> 2) & 7) << 3;   // 2 display px per dither cell
-      for (var x = 0; x < W; x++) {
-        var k = (y * W + x) << 2;
-        var r = d[k], g = d[k + 1], b = d[k + 2];
-
-        var dx = x - cx;
-        var dy = (y - cy) * 0.92;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        var t = dist <= r0 ? 0 : dist >= r1 ? 1 : (dist - r0) / (r1 - r0);
-        t = t * t * (3 - 2 * t);
-
-        var thr = (BAYER[by + ((x >> 2) & 7)] - 0.5) * STEP;
-
-        var lum = 0.299 * r + 0.587 * g + 0.114 * b;
-
-        // Mute outward: drain colour toward grey, then dim hard. The studio
-        // backdrop is light, so it needs real darkening or it becomes the
-        // brightest thing on a dark page.
-        var desat = t * 0.95;
-        r += (lum - r) * desat;
-        g += (lum - g) * desat;
-        b += (lum - b) * desat;
-
-        var dim = 1 - t * 0.93;
-        r *= dim; g *= dim; b *= dim;
-
-        // Recompute after muting, then lift contrast a little on the face.
-        lum = 0.299 * r + 0.587 * g + 0.114 * b;
-        var target = (lum - 128) * 1.12 + 132;
-
-        /*
-         * Dither the luminance and carry the original colour through, rather
-         * than dithering each channel. Per-channel dithering speckles chroma
-         * noise across skin, which reads as compression artefacts instead of
-         * texture.
-         */
-        var q = Math.round((target + thr) / STEP);
-        q = q < 0 ? 0 : q > MAX ? MAX : q;
-        var lit = q * STEP;
-
-        var scale = lum > 3 ? lit / lum : 0;
-        r *= scale; g *= scale; b *= scale;
-
-        d[k] = r < 0 ? 0 : r > 255 ? 255 : r;
-        d[k + 1] = g < 0 ? 0 : g > 255 ? 255 : g;
-        d[k + 2] = b < 0 ? 0 : b > 255 ? 255 : b;
+        var ink = inks[idx];
+        d[k] = ink[0];
+        d[k + 1] = ink[1];
+        d[k + 2] = ink[2];
         d[k + 3] = 255;
       }
     }
 
-    ctx.putImageData(image, 0, 0);
+    ctx.putImageData(frame, 0, 0);
     return true;
   }
 
-  /* ---------- scroll reveal ---------- */
+  /* ---------- wiring ---------- */
+
+  function mount(img) {
+    if (img.__dithered) return;
+    img.__dithered = true;
+
+    var wrap = document.createElement('span');
+    wrap.className = 'dither';
+    img.parentNode.insertBefore(wrap, img);
+    wrap.appendChild(img);
+
+    var canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    wrap.appendChild(canvas);
+
+    var draw = function () {
+      if (render(img, canvas)) wrap.classList.add('is-ready');
+    };
+
+    if (img.complete && img.naturalWidth) draw();
+    else img.addEventListener('load', draw);
+
+    return draw;
+  }
 
   function reveal() {
     var nodes = document.querySelectorAll('[data-reveal]');
-    if (!('IntersectionObserver' in window) || REDUCED) {
+    var reduced = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!('IntersectionObserver' in window) || reduced) {
       for (var i = 0; i < nodes.length; i++) nodes[i].classList.add('is-visible');
       return;
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    }, { rootMargin: '0px 0px -10% 0px' });
+
     for (var n = 0; n < nodes.length; n++) io.observe(nodes[n]);
   }
 
-  /* ---------- boot ---------- */
-
   function init() {
-    var canvas = document.querySelector('.dither-field');
-    if (canvas) {
-      var field = new HeroField(canvas);
-      if (field.ctx) {
-        canvas.classList.add('is-ready');
-        if (!REDUCED) {
-          field.start();
-          /* stop burning frames once the hero has scrolled away */
-          if ('IntersectionObserver' in window) {
-            new IntersectionObserver(function (entries) {
-              entries[0].isIntersecting ? field.start() : field.stop();
-            }, { threshold: 0 }).observe(canvas);
-          }
-        }
-        var timer;
-        window.addEventListener('resize', function () {
-          clearTimeout(timer);
-          timer = setTimeout(function () { field.resize(); }, 150);
-        });
-      }
+    var redraws = [];
+    var images = document.querySelectorAll('img[data-dither]');
+    for (var i = 0; i < images.length; i++) {
+      var draw = mount(images[i]);
+      if (draw) redraws.push(draw);
     }
 
-    var portrait = document.getElementById('portrait-dither');
-    var source = document.getElementById('portrait-src');
-    if (portrait && source) {
-      var run = function () {
-        if (ditherPortrait(source, portrait)) {
-          portrait.classList.add('is-ready');
-        }
-      };
-      source.complete && source.naturalWidth ? run() : source.addEventListener('load', run);
+    if (redraws.length) {
+      var timer;
+      window.addEventListener('resize', function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          for (var j = 0; j < redraws.length; j++) redraws[j]();
+        }, 180);
+      });
     }
 
     reveal();
 
-    /* nav shadow-line once scrolled */
+    /* nav rule appears once the header stops sitting on the page top */
     var header = document.querySelector('.site-header');
     if (header) {
       var onScroll = function () {

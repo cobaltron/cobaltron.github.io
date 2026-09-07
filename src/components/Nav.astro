@@ -18,8 +18,10 @@ const isCurrent = (href: string) =>
   <div class="container">
     <nav class="nav" aria-label="Primary">
       <a href="/" class="nav-brand">
-        <span class="nav-mark" aria-hidden="true"></span>
-        rajarshi lahiri<span class="dot">.</span>
+        <svg class="nav-mark" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
+          <path d="M5 17.5V13M11 17.5V8M17 17.5V3.5" />
+        </svg>
+        <span>rajarshi lahiri<span class="dot">.</span></span>
       </a>
 
       <div class="nav-links">
@@ -35,7 +37,7 @@ const isCurrent = (href: string) =>
       </div>
 
       <details class="nav-toggle">
-        <summary aria-label="Menu">≡</summary>
+        <summary aria-label="Menu"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12M2 8h12M2 12h12" /></svg></summary>
         <div class="nav-menu">
           {links.map((link) => (
             <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>

@@ -46,11 +46,12 @@ const reading = readingTime(body);
   <article>
     <div class="container container--read">
       <header class="entry-header">
-        <p class="section-index"><span>{KIND_LABEL[kind]}</span></p>
         <h1 class="entry-title">{title}</h1>
         {summary && <p class="entry-summary">{summary}</p>}
 
         <div class="entry-meta">
+          {/* the kind belongs with the other facts, not as a label over the title */}
+          <span>{KIND_LABEL[kind]}</span>
           {stage && <Stage stage={stage} />}
 
           {planted && (
@@ -111,8 +112,5 @@ const reading = readingTime(body);
     display: inline-flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-  }
-  .entry-header .section-index {
-    margin-bottom: 0;
   }
 </style>

@@ -10,7 +10,7 @@ const posts = (await getCollection('posts'))
 ---
 
 <Base title="Posts" description="Essays and write-ups, newest first.">
-  <Hero eyebrow="The stream" compact>
+  <Hero compact>
     <h1>Posts</h1>
     <p class="hero-lead">
       Longer pieces with a date on them — finished thoughts rather than growing ones.
@@ -19,7 +19,7 @@ const posts = (await getCollection('posts'))
   </Hero>
 
   <section class="section">
-    <div class="container container--narrow">
+    <div class="container">
       {
         posts.length === 0 ? (
           <div class="empty">

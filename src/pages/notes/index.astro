@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Hero from '../../components/Hero.astro';
 import Stage from '../../components/Stage.astro';
 import { formatDate, isoDate } from '../../lib/format';
-import { STAGES } from '../../content.config';
+import { STAGES, STAGE_META } from '../../content.config';
 
 const notes = (await getCollection('notes'))
   .filter((n) => import.meta.env.DEV || !n.data.draft)
@@ -24,7 +24,7 @@ const counts = STAGES.map((stage) => ({
   title="Notes"
   description="Evergreen notes — ideas I keep coming back to and revise as I learn better."
 >
-  <Hero eyebrow="The garden" compact>
+  <Hero compact>
     <h1>Notes</h1>
     <p class="hero-lead">
       Evergreen, non-chronological, and openly unfinished. Each note carries a growth
@@ -33,14 +33,14 @@ const counts = STAGES.map((stage) => ({
   </Hero>
 
   <section class="section">
-    <div class="container container--narrow">
+    <div class="container">
       <div class="filters">
         <span class="filter-label">Stage</span>
         <button class="filter" data-filter="all" aria-pressed="true">All ({notes.length})</button>
         {
           counts.map(({ stage, count }) => (
             <button class="filter" data-filter={stage} aria-pressed="false" disabled={count === 0}>
-              {stage} ({count})
+              {STAGE_META[stage].label} ({count})
             </button>
           ))
         }

@@ -19,7 +19,7 @@ const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
   title="Links"
   description="A curated reading list — things worth your time, with notes on why."
 >
-  <Hero eyebrow="Collected" compact>
+  <Hero compact>
     <h1>Links</h1>
     <p class="hero-lead">
       Things I've read that changed how I think about something. The commentary is
@@ -28,7 +28,7 @@ const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
   </Hero>
 
   <section class="section">
-    <div class="container container--narrow">
+    <div class="container">
       {import.meta.env.DEV && pending > 0 && (
         <p class="pending-note">
           {pending} draft{pending === 1 ? '' : 's'} awaiting a note — visible only in dev.
@@ -83,8 +83,7 @@ const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
     border: 1px dashed var(--line-hi);
     padding: 0.9rem 1.1rem;
     margin: 0 0 1.5rem;
-    font-family: var(--mono);
-    font-size: 0.8rem;
+    font-size: var(--t-xs);
     color: var(--text-faint);
   }
   .pending-note code {
@@ -98,8 +97,7 @@ const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
     flex-wrap: wrap;
   }
   .link-foot time {
-    font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: var(--t-xs);
     color: var(--text-faint);
   }
 </style>

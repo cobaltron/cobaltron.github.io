@@ -1,27 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,400..600&display=swap');
 
 /* ============================================================
-   Tokens — single dark palette, cyan accent.
-   Carried over from the portfolio, extended for long-form reading.
+   Tokens — one world: a green-black garden reproduced in five inks.
+
+   Dithering is this site's material, so its ink ramp and dot pitch live here
+   as tokens rather than as constants in the script. public/js/dither.js reads
+   --ink-* and --dither-cell off :root, which is what keeps one palette and one
+   dot size across every dithered surface.
    ============================================================ */
 :root {
-  --bg: #0a0a0a;
-  --bg-alt: #0e0e0f;
-  --surface: #121214;
-  --surface-hi: #17171a;
-  --text: #ededed;
-  --text-dim: #8b8b93;
-  --text-faint: #5a5a62;
-  --accent: #22d3ee;
-  --accent-dim: #12707f;
-  --accent-deep: #0d2a30;
-  --line: #232327;
-  --line-hi: #2f2f35;
-  --warn: #f0b429;
+  /* ground */
+  --bg: #0d1310;
+  --bg-alt: #111814;
+  --surface: #141c17;
+  --surface-hi: #18211b;
+  --soil: #080c0a;
 
-  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --serif: 'Newsreader', Iowan Old Style, Georgia, serif;
+  /* ink */
+  --text: #e6e4d9;
+  --text-dim: #99a597;
+  --text-faint: #7f8e7f;
+
+  --accent: #9ecb8f;
+  --accent-dim: #3f5c40;
+  --accent-deep: #16241a;
+
+  --line: #202a23;
+  --line-hi: #2f3d33;
+
+  /* the one warm signal: focus, and nothing else */
+  --signal: #d9a441;
+
+  /* growth stage, carried by saturation rather than by hue */
+  --stem-seedling: #647563;
+  --stem-budding: #7ca173;
+  --stem-evergreen: #c2d9a4;
+
+  /* dither: five inks, one dot pitch in CSS px */
+  --dither-cell: 3;
+  --ink-0: #070b09;
+  --ink-1: #1e2f22;
+  --ink-2: #41613f;
+  --ink-3: #84a877;
+  --ink-4: #dfe3cf;
+
+  /* Two faces. Literata reads and displays, Archivo carries the interface.
+     There is no third family: code falls back to the platform's own mono,
+     which is for code rather than for looking technical. */
+  --sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Literata', Iowan Old Style, Georgia, serif;
+  --code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* One scale, ratio 1.25 from a 16px base. --t-read is the serif's optical
+     match to --t-base, not another step on the ladder. */
+  --t-xs: 0.8rem;
+  --t-base: 1rem;
+  --t-read: 1.125rem;
+  --t-md: 1.25rem;
+  --t-lg: 1.5625rem;
+  --t-xl: 1.953rem;
+  --t-2xl: 2.441rem;
+  --t-3xl: 3.052rem;
+
+  /* One tracking value, used only above --t-lg. Nothing is tracked out. */
+  --track-tight: -0.02em;
 
   --shell: 1160px;
   --read: 68ch;
@@ -29,11 +71,6 @@
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 
   color-scheme: dark;
-}
-
-/* Bayer-ish dot texture, used as a wash on alternating bands */
-:root {
-  --dither-wash: radial-gradient(circle at center, var(--line-hi) 0.6px, transparent 0.7px);
 }
 
 *,
@@ -51,8 +88,8 @@ html {
 body {
   margin: 0;
   font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.65;
+  font-size: var(--t-base);
+  line-height: 1.6;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -74,6 +111,7 @@ main {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
@@ -87,20 +125,86 @@ img {
 a {
   color: var(--accent);
   text-decoration: none;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
   transition: color 0.2s var(--ease);
 }
 a:hover {
   color: var(--text);
 }
 
+/* ============================================================
+   Browser surfaces — the parts the browser draws still belong here.
+   ============================================================ */
+::selection {
+  background: var(--accent-deep);
+  color: var(--text);
+}
+
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--signal);
   outline-offset: 3px;
 }
 
-::selection {
+html {
+  caret-color: var(--accent);
+  scrollbar-color: var(--line-hi) var(--bg);
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-hi);
+  border: 3px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
   background: var(--accent-dim);
-  color: var(--text);
+}
+
+/* Dates and figures line up in a column rather than shuffling per glyph. */
+time,
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   Dithered images — the one place the material appears.
+   The canvas backing store is measured in dots, so CSS scales it back up
+   and one dot is --dither-cell CSS pixels wide on every screen.
+   ============================================================ */
+.dither {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.dither > img,
+.dither > canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+.dither > canvas {
+  position: absolute;
+  inset: 0;
+  image-rendering: pixelated;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease);
+}
+.dither.is-ready > canvas {
+  opacity: 1;
+}
+/* The source stays in the DOM for alt text and for the no-JS case; once the
+   dither has painted, it is the thing that shows. */
+.dither.is-ready > img {
+  opacity: 0;
 }
 
 .container {
@@ -108,9 +212,6 @@ a:hover {
   max-width: var(--shell);
   margin: 0 auto;
   padding: 0 var(--pad);
-}
-.container--narrow {
-  max-width: 900px;
 }
 .container--read {
   max-width: calc(var(--read) + var(--pad) * 2);
@@ -124,8 +225,7 @@ a:hover {
   padding: 0.75rem 1.1rem;
   background: var(--accent);
   color: var(--bg);
-  font-family: var(--mono);
-  font-size: 0.8rem;
+  font-size: var(--t-xs);
 }
 .skip-link:focus {
   left: 1rem;
@@ -139,7 +239,7 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 60;
-  background: rgba(10, 10, 10, 0.78);
+  background: rgba(13, 19, 16, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid transparent;
@@ -161,10 +261,8 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
-  font-family: var(--mono);
-  font-size: 0.95rem;
+  font-size: var(--t-base);
   font-weight: 500;
-  letter-spacing: 0.02em;
   color: var(--text);
   flex: none;
 }
@@ -172,9 +270,12 @@ a:hover {
   width: 22px;
   height: 22px;
   flex: none;
-  background-image: radial-gradient(circle at center, var(--accent) 1px, transparent 1.1px);
-  background-size: 4px 4px;
-  border: 1px solid var(--line-hi);
+  /* Three stems at the plot's three heights: the site's own mark, drawn on
+     the same stroke weight as every other icon. */
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
 }
 .nav-brand .dot {
   color: var(--accent);
@@ -187,10 +288,7 @@ a:hover {
 }
 
 .nav-link {
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-dim);
   position: relative;
 }
@@ -230,7 +328,7 @@ a:hover {
     height: 40px;
     border: 1px solid var(--line-hi);
     color: var(--text);
-    font-size: 1rem;
+    font-size: var(--t-base);
   }
   .nav-toggle summary::-webkit-details-marker {
     display: none;
@@ -252,10 +350,7 @@ a:hover {
   }
   .nav-menu a {
     padding: 0.6rem 1.1rem;
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: var(--t-xs);
     color: var(--text-dim);
   }
   .nav-menu a:hover,
@@ -272,11 +367,8 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: var(--mono);
-  font-size: 0.78rem;
+  font-size: var(--t-base);
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   padding: 0.62rem 1.1rem;
   color: var(--bg);
   background: var(--accent);
@@ -301,49 +393,12 @@ a:hover {
 }
 
 /* ============================================================
-   Hero / dither field
+   Hero
    ============================================================ */
 .hero {
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
-}
-
-.dither-field {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  opacity: 0;
-  transition: opacity 1.2s var(--ease);
-  pointer-events: none;
-}
-.dither-field.is-ready {
-  opacity: 0.6;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      to right,
-      rgba(10, 10, 10, 0.9) 0%,
-      rgba(10, 10, 10, 0.72) 40%,
-      rgba(10, 10, 10, 0.15) 72%,
-      rgba(10, 10, 10, 0.3) 100%
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(10, 10, 10, 0.5) 0%,
-      rgba(10, 10, 10, 0.05) 35%,
-      rgba(10, 10, 10, 0.55) 80%,
-      var(--bg) 100%
-    );
-  pointer-events: none;
 }
 
 .hero .container {
@@ -359,30 +414,13 @@ a:hover {
   padding-bottom: 3rem;
 }
 
-.hero-eyebrow {
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin: 0 0 1.4rem;
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-.hero-eyebrow::before {
-  content: '';
-  width: 32px;
-  height: 1px;
-  background: var(--accent);
-  flex: none;
-}
-
 .hero h1 {
-  font-size: clamp(2.3rem, 5.4vw, 3.6rem);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-  font-weight: 700;
+  font-family: var(--serif);
+  font-size: clamp(var(--t-2xl), 5.4vw, var(--t-3xl));
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.06;
+  letter-spacing: var(--track-tight);
+  font-weight: 600;
   margin: 0 0 1.2rem;
   max-width: 20ch;
 }
@@ -392,7 +430,7 @@ a:hover {
 }
 
 .hero-lead {
-  font-size: clamp(1rem, 2vw, 1.12rem);
+  font-size: var(--t-read);
   color: var(--text-dim);
   max-width: 54ch;
   margin: 0 0 2rem;
@@ -407,11 +445,15 @@ a:hover {
   gap: 0.8rem;
 }
 
+/* The text column takes the slack so the portrait sits flush with the right
+   edge of the container, aligning with the nav above it. The lead keeps its
+   own max-width, so absorbing the slack costs nothing in measure. Home and
+   About share this. */
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 3.5rem;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: start;
 }
 
 .portrait {
@@ -419,37 +461,21 @@ a:hover {
   width: clamp(170px, 22vw, 240px);
   aspect-ratio: 1;
   border: 1px solid var(--line-hi);
-  border-radius: 14px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--soil);
   overflow: hidden;
   flex: none;
 }
-.portrait img,
-.portrait canvas {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.portrait canvas {
-  position: absolute;
-  inset: 0;
-  /* The portrait's centre is a real photograph now, so it must resample
-     smoothly. Only the hero field (.dither-field) stays pixelated. */
-  image-rendering: auto;
-  opacity: 0;
-  transition: opacity 0.6s var(--ease);
-}
-.portrait canvas.is-ready {
-  opacity: 1;
-}
+/* The frame is the only thing that survives the dither: the ink ramp does the
+   rest, so there is no tinted overlay to reconcile with it. */
 .portrait::after {
   content: '';
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(34, 211, 238, 0.18);
+  border: 1px solid var(--line-hi);
   border-radius: inherit;
   pointer-events: none;
+  z-index: 1;
 }
 
 @media (max-width: 860px) {
@@ -481,40 +507,19 @@ a:hover {
 }
 .section--wash {
   background-color: var(--bg-alt);
-  background-image: var(--dither-wash);
-  background-size: 4px 4px;
 }
 
 .section-head {
   margin-bottom: 2.5rem;
 }
 
-.section-index {
-  font-family: var(--mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  margin: 0 0 0.9rem;
-}
-.section-index span {
-  color: var(--accent);
-}
-.section-index::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--line);
-}
-
 .section-title {
-  font-size: clamp(1.6rem, 3.4vw, 2.2rem);
-  line-height: 1.15;
-  letter-spacing: -0.025em;
-  font-weight: 700;
+  font-family: var(--serif);
+  font-size: clamp(var(--t-xl), 3.4vw, var(--t-2xl));
+  font-variation-settings: 'opsz' 48;
+  line-height: 1.18;
+  letter-spacing: var(--track-tight);
+  font-weight: 600;
   margin: 0 0 0.6rem;
 }
 
@@ -525,10 +530,7 @@ a:hover {
 }
 
 .section-more {
-  font-family: var(--mono);
-  font-size: 0.76rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   margin-top: 2rem;
   display: inline-flex;
   align-items: center;
@@ -547,12 +549,6 @@ a:hover {
 .grid--3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.grid--2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.grid--1 {
-  grid-template-columns: 1fr;
-}
 
 @media (max-width: 940px) {
   .grid--3 {
@@ -560,94 +556,13 @@ a:hover {
   }
 }
 @media (max-width: 640px) {
-  .grid--3,
-  .grid--2 {
+  .grid--3 {
     grid-template-columns: 1fr;
   }
 }
 
-.panel {
-  position: relative;
-  background: var(--surface);
-  padding: 1.9rem 1.7rem;
-  overflow: hidden;
-  transition: background 0.25s var(--ease);
-  display: flex;
-  flex-direction: column;
-}
-
-/* dither wipe on hover, in place of a lift/shadow */
-.panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle at center, var(--accent) 0.7px, transparent 0.8px);
-  background-size: 4px 4px;
-  opacity: 0;
-  transition: opacity 0.3s var(--ease);
-  pointer-events: none;
-}
-.panel:hover,
-.panel:focus-within {
-  background: var(--surface-hi);
-}
-.panel:hover::before,
-.panel:focus-within::before {
-  opacity: 0.09;
-}
-
-.panel h3 {
-  font-size: 1.1rem;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  font-weight: 600;
-  margin: 0 0 0.6rem;
-}
-.panel h3 a {
-  color: var(--text);
-}
-.panel h3 a:hover {
-  color: var(--accent);
-}
-/* makes the whole panel clickable without nesting interactive elements */
-.panel h3 a::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-.panel p {
-  color: var(--text-dim);
-  font-size: 0.94rem;
-  margin: 0 0 0.9rem;
-}
-.panel p:last-child {
-  margin-bottom: 0;
-}
-.panel-foot {
-  margin-top: auto;
-  padding-top: 1.1rem;
-}
-
-.panel-num {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  color: var(--text-faint);
-  margin: 0 0 0.8rem;
-}
-
-.panel-icon {
-  font-size: 1.05rem;
-  color: var(--accent);
-  margin-bottom: 1rem;
-}
-
 .label {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   margin: 1.2rem 0 0.5rem;
 }
@@ -665,8 +580,7 @@ a:hover {
 }
 .tags li,
 .tag {
-  font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: var(--t-xs);
   color: var(--text-dim);
   border: 1px solid var(--line-hi);
   padding: 0.2rem 0.55rem;
@@ -684,10 +598,7 @@ a.tag:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   white-space: nowrap;
 }
@@ -701,13 +612,12 @@ a.tag:hover {
   border: 1px solid var(--line);
   background: transparent;
 }
-/* lit dots get a filled ground plus a denser dither so the count is
-   readable at 9px — a pattern-only difference was invisible */
+/* Lit steps read by fill, not by pattern: at 9px a pattern difference was
+   invisible, and a dot lattice here would be dithering with nothing to
+   reproduce. */
 .stage-dot.is-lit {
-  border-color: var(--accent-dim);
-  background-color: var(--accent-deep);
-  background-image: radial-gradient(circle at center, var(--accent) 1.1px, transparent 1.2px);
-  background-size: 3px 3px;
+  border-color: var(--stem-budding);
+  background: var(--stem-budding);
 }
 .stage[data-stage='evergreen'] {
   color: var(--accent);
@@ -725,15 +635,17 @@ a.tag:hover {
   margin-bottom: 2.75rem;
 }
 .entry-title {
-  font-size: clamp(1.9rem, 4.4vw, 2.9rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  font-weight: 700;
+  font-family: var(--serif);
+  font-size: clamp(var(--t-xl), 4.4vw, var(--t-2xl));
+  font-variation-settings: 'opsz' 60;
+  line-height: 1.14;
+  letter-spacing: var(--track-tight);
+  font-weight: 600;
   margin: 0.9rem 0 0.9rem;
 }
 .entry-summary {
   font-family: var(--serif);
-  font-size: 1.2rem;
+  font-size: var(--t-md);
   line-height: 1.55;
   color: var(--text-dim);
   margin: 0 0 1.5rem;
@@ -744,9 +656,7 @@ a.tag:hover {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem 1.4rem;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  font-size: var(--t-xs);
   color: var(--text-faint);
 }
 .entry-meta time {
@@ -762,7 +672,7 @@ a.tag:hover {
   padding: 0.85rem 1.1rem;
   border: 1px solid var(--line);
   background: var(--surface);
-  font-size: 0.88rem;
+  font-size: var(--t-base);
   color: var(--text-dim);
   display: flex;
   gap: 0.8rem;
@@ -777,9 +687,11 @@ a.tag:hover {
    Prose
    ============================================================ */
 .prose {
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: #d6d6db;
+  font-family: var(--serif);
+  font-variation-settings: 'opsz' 14;
+  font-size: var(--t-read);
+  line-height: 1.72;
+  color: var(--text);
   max-width: var(--read);
 }
 /* Reset first, then space siblings. `.prose p { margin: 0 }` would out-rank
@@ -796,26 +708,23 @@ a.tag:hover {
 .prose h4 {
   color: var(--text);
   line-height: 1.25;
-  letter-spacing: -0.02em;
   margin-top: 2.6em;
   margin-bottom: 0.7em;
   scroll-margin-top: 6rem;
 }
 .prose h2 {
-  font-size: 1.5rem;
+  font-size: var(--t-lg);
   font-weight: 700;
   padding-top: 1.6rem;
   border-top: 1px solid var(--line);
 }
 .prose h3 {
-  font-size: 1.2rem;
+  font-size: var(--t-md);
   font-weight: 600;
 }
 .prose h4 {
-  font-size: 1rem;
+  font-size: var(--t-base);
   font-weight: 600;
-  font-family: var(--mono);
-  letter-spacing: 0.02em;
   color: var(--text-dim);
 }
 .prose a {
@@ -848,7 +757,7 @@ a.tag:hover {
   padding: 0.2rem 0 0.2rem 1.4rem;
   border-left: 2px solid var(--accent-dim);
   font-family: var(--serif);
-  font-size: 1.15rem;
+  font-size: var(--t-md);
   font-style: italic;
   color: var(--text-dim);
 }
@@ -858,8 +767,7 @@ a.tag:hover {
 .prose hr {
   border: 0;
   height: 1px;
-  background-image: radial-gradient(circle at center, var(--line-hi) 0.6px, transparent 0.7px);
-  background-size: 4px 4px;
+  background: var(--line-hi);
   margin: 2.8em 0;
 }
 .prose img,
@@ -870,8 +778,7 @@ a.tag:hover {
   margin: 2em 0;
 }
 .prose figcaption {
-  font-family: var(--mono);
-  font-size: 0.76rem;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   margin-top: 0.7rem;
   text-align: center;
@@ -879,7 +786,7 @@ a.tag:hover {
 
 /* inline code */
 .prose :not(pre) > code {
-  font-family: var(--mono);
+  font-family: var(--code);
   font-size: 0.86em;
   color: var(--accent);
   background: var(--accent-deep);
@@ -890,16 +797,16 @@ a.tag:hover {
 
 /* shiki blocks */
 .prose pre {
-  background: #0d0d0f !important;
+  background: var(--soil) !important;
   border: 1px solid var(--line-hi);
   padding: 1.15rem 1.25rem;
   overflow-x: auto;
-  font-size: 0.88rem;
+  font-size: var(--t-base);
   line-height: 1.6;
   margin-top: 1.6em;
 }
 .prose pre code {
-  font-family: var(--mono);
+  font-family: var(--code);
   background: none;
   border: 0;
   padding: 0;
@@ -909,7 +816,7 @@ a.tag:hover {
 .prose table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.92rem;
+  font-size: var(--t-base);
   display: block;
   overflow-x: auto;
 }
@@ -920,10 +827,7 @@ a.tag:hover {
   text-align: left;
 }
 .prose th {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   background: var(--surface);
   font-weight: 500;
@@ -966,10 +870,7 @@ a.tag:hover {
   border-top: 1px solid var(--line);
 }
 .backlinks h2 {
-  font-family: var(--mono);
-  font-size: 0.76rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   margin: 0 0 1.3rem;
   display: flex;
@@ -1000,10 +901,7 @@ a.tag:hover {
   background: var(--surface-hi);
 }
 .backlink-kind {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--accent-dim);
   display: block;
   margin-bottom: 0.3rem;
@@ -1017,11 +915,11 @@ a.tag:hover {
 }
 .backlink-list p {
   margin: 0.3rem 0 0;
-  font-size: 0.88rem;
+  font-size: var(--t-base);
   color: var(--text-dim);
 }
 .backlinks-empty {
-  font-size: 0.9rem;
+  font-size: var(--t-base);
   color: var(--text-faint);
   font-style: italic;
   margin: 0;
@@ -1054,19 +952,16 @@ a.tag:hover {
   background: var(--surface);
 }
 .stream-when {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 .stream-title {
-  font-size: 1.2rem;
+  font-family: var(--serif);
+  font-size: var(--t-md);
   font-weight: 600;
-  letter-spacing: -0.015em;
   margin: 0 0 0.4rem;
 }
 .stream-title a {
@@ -1082,7 +977,7 @@ a.tag:hover {
 }
 .stream-summary {
   color: var(--text-dim);
-  font-size: 0.95rem;
+  font-size: var(--t-base);
   margin: 0 0 0.8rem;
   max-width: 68ch;
 }
@@ -1110,10 +1005,7 @@ a.tag:hover {
   border-bottom: 1px solid var(--line);
 }
 .filter {
-  font-family: var(--mono);
-  font-size: 0.73rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-dim);
   background: transparent;
   border: 1px solid var(--line-hi);
@@ -1131,10 +1023,7 @@ a.tag:hover {
   border-color: var(--accent);
 }
 .filter-label {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   margin-right: 0.4rem;
 }
@@ -1159,10 +1048,10 @@ a.tag:hover {
   margin-bottom: 0.5rem;
 }
 .link-title {
-  font-size: 1.08rem;
+  font-family: var(--serif);
+  font-size: var(--t-md);
   font-weight: 600;
   margin: 0;
-  letter-spacing: -0.01em;
 }
 .link-title a {
   color: var(--text);
@@ -1176,8 +1065,7 @@ a.tag:hover {
   color: var(--accent-dim);
 }
 .link-source {
-  font-family: var(--mono);
-  font-size: 0.74rem;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   white-space: nowrap;
 }
@@ -1185,7 +1073,7 @@ a.tag:hover {
   color: var(--text-dim);
   margin: 0 0 0.8rem;
   max-width: 70ch;
-  font-size: 0.95rem;
+  font-size: var(--t-base);
 }
 
 /* ============================================================
@@ -1217,7 +1105,8 @@ a.tag:hover {
   padding: 1.3rem 1.5rem;
 }
 .shot-body h3 {
-  font-size: 0.96rem;
+  font-family: var(--serif);
+  font-size: var(--t-base);
   font-weight: 500;
   line-height: 1.5;
   margin: 0;
@@ -1237,8 +1126,7 @@ a.tag:hover {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.85rem 1.1rem;
-  font-family: var(--mono);
-  font-size: 0.82rem;
+  font-size: var(--t-xs);
   border-bottom: 1px solid var(--line);
 }
 .fact:last-child {
@@ -1246,8 +1134,6 @@ a.tag:hover {
 }
 .fact dt {
   color: var(--text-faint);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 .fact dd {
   margin: 0;
@@ -1266,10 +1152,7 @@ a.tag:hover {
   border-bottom: 1px solid var(--line);
 }
 .role-when {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   padding-top: 0.35rem;
 }
@@ -1277,13 +1160,13 @@ a.tag:hover {
   color: var(--accent);
 }
 .role h3 {
-  font-size: 1.15rem;
+  font-family: var(--serif);
+  font-size: var(--t-md);
   font-weight: 600;
   margin: 0 0 0.15rem;
 }
 .role-org {
-  font-family: var(--mono);
-  font-size: 0.85rem;
+  font-size: var(--t-base);
   color: var(--text-dim);
   margin: 0 0 0.8rem;
 }
@@ -1328,9 +1211,9 @@ a.tag:hover {
   margin: 0 0 0.5rem;
 }
 .empty code {
-  font-family: var(--mono);
+  font-family: var(--code);
   color: var(--accent);
-  font-size: 0.88rem;
+  font-size: var(--t-base);
 }
 
 /* ============================================================
@@ -1343,9 +1226,7 @@ a.tag:hover {
   margin-top: 3.5rem;
   padding-top: 2rem;
   border-top: 1px solid var(--line);
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
+  font-size: var(--t-xs);
 }
 .pager a {
   max-width: 45%;
@@ -1353,9 +1234,7 @@ a.tag:hover {
 .pager span {
   display: block;
   color: var(--text-faint);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   margin-bottom: 0.3rem;
 }
 
@@ -1369,10 +1248,11 @@ a.tag:hover {
   margin-top: 4rem;
 }
 .footer-quote {
-  font-size: clamp(1.3rem, 3.2vw, 1.95rem);
-  line-height: 1.28;
-  letter-spacing: -0.02em;
-  font-weight: 600;
+  font-family: var(--serif);
+  font-size: clamp(var(--t-lg), 3.2vw, var(--t-xl));
+  line-height: 1.3;
+  letter-spacing: var(--track-tight);
+  font-weight: 500;
   max-width: 22ch;
   margin: 0 0 2.5rem;
 }
@@ -1387,10 +1267,7 @@ a.tag:hover {
   padding-bottom: 2.5rem;
 }
 .footer-col h3 {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   margin: 0 0 0.9rem;
   font-weight: 500;
@@ -1405,7 +1282,7 @@ a.tag:hover {
 }
 .footer-col a {
   color: var(--text-dim);
-  font-size: 0.9rem;
+  font-size: var(--t-base);
 }
 .footer-col a:hover {
   color: var(--accent);
@@ -1430,7 +1307,7 @@ a.tag:hover {
   height: 38px;
   border: 1px solid var(--line-hi);
   color: var(--text-dim);
-  font-size: 0.9rem;
+  font-size: var(--t-base);
   transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
 .socials a:hover {
@@ -1438,12 +1315,70 @@ a.tag:hover {
   border-color: var(--accent);
 }
 .colophon {
-  font-family: var(--mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
+  font-size: var(--t-xs);
   color: var(--text-faint);
   margin: 0;
 }
 .colophon span {
   color: var(--accent-dim);
+}
+
+/* ============================================================
+   Authored icons — one stroke weight, no fills.
+   ============================================================ */
+.icon {
+  width: 1em;
+  height: 1em;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+/* ============================================================
+   Content lists — one language for every collection of things:
+   a title, a line about it, and a quiet meta line. This replaces the
+   bordered card grid, so projects read the same on the home page and on
+   their own index.
+   ============================================================ */
+.work {
+  display: grid;
+  gap: 2.1rem 3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 860px) {
+  .work--2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.work-item h3 {
+  font-family: var(--serif);
+  font-size: var(--t-md);
+  font-weight: 400;
+  line-height: 1.25;
+  margin: 0 0 0.4rem;
+}
+.work-item h3 a {
+  color: var(--text);
+  transition: color 0.2s var(--ease);
+}
+.work-item h3 a:hover {
+  color: var(--accent);
+}
+.work-item p {
+  margin: 0;
+  max-width: 58ch;
+  font-size: var(--t-base);
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.work-item .work-meta {
+  margin-top: 0.5rem;
+  font-size: var(--t-xs);
+  color: var(--text-faint);
 }

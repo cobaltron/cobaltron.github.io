@@ -6,3 +6,10 @@ dist/
 .env.production
 .DS_Store
 npm-debug.log*
+
+# Impeccable working artifacts. The design record (DESIGN.md, design.json)
+# and the surface briefs are versioned; screenshots and session journals
+# are local scratch.
+.impeccable/review/
+.impeccable/live/
+.impeccable/hook.cache.json

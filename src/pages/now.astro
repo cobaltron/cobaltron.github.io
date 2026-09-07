@@ -12,7 +12,7 @@ const Content = now ? (await render(now)).Content : null;
   title="Now"
   description="What Rajarshi Lahiri is working on, reading and learning at the moment."
 >
-  <Hero eyebrow="Now" compact>
+  <Hero compact>
     <h1>What I'm doing now</h1>
     <p class="hero-lead">
       A snapshot, not a résumé. If it's badly out of date, that's a fair thing to
@@ -41,9 +41,7 @@ const Content = now ? (await render(now)).Content : null;
 
 <style>
   .now-stamp {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
+    font-size: var(--t-xs);
     color: var(--text-faint);
     margin: 0;
   }

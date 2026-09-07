@@ -20,11 +20,9 @@ const achievements = (await getCollection('achievements')).sort(
   description="Rajarshi Lahiri — Salesforce developer and applied AI engineer, based in Kolkata."
 >
   <section class="hero">
-    <canvas class="dither-field" aria-hidden="true"></canvas>
-    <div class="container">
+    <div class="container container--read">
       <div class="hero-grid">
         <div>
-          <p class="hero-eyebrow">Kolkata, India</p>
           <h1>About</h1>
           <p class="hero-lead">
             Salesforce developer and applied AI engineer. I build enterprise platform
@@ -33,13 +31,12 @@ const achievements = (await getCollection('achievements')).sort(
           </p>
           <div class="hero-actions">
             <a class="btn" href="/CV_Rajarshi%20Lahiri.pdf" download>
-              <i class="fas fa-arrow-down"></i> Download CV
+              <svg class="icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2v10M4 8.5l4 4 4-4" /></svg> Download CV
             </a>
           </div>
         </div>
         <div class="portrait">
-          <img id="portrait-src" src="/img/photo.jpg" alt="Rajarshi Lahiri" width="240" height="240" />
-          <canvas id="portrait-dither" aria-hidden="true"></canvas>
+          <img src="/img/photo.jpg" alt="Rajarshi Lahiri" width="240" height="240" data-dither="portrait" />
         </div>
       </div>
     </div>
@@ -62,11 +59,8 @@ const achievements = (await getCollection('achievements')).sort(
   {
     roles.length > 0 && (
       <section class="section section--wash">
-        <div class="container container--narrow">
+        <div class="container">
           <div class="section-head">
-            <p class="section-index">
-              <span>01</span> Experience
-            </p>
             <h2 class="section-title">Work</h2>
           </div>
 
@@ -91,21 +85,14 @@ const achievements = (await getCollection('achievements')).sort(
   {
     publications.length > 0 && (
       <section class="section">
-        <div class="container container--narrow">
+        <div class="container">
           <div class="section-head">
-            <p class="section-index">
-              <span>02</span> Research
-            </p>
             <h2 class="section-title">Publications</h2>
           </div>
 
-          <div class="grid grid--2">
+          <ul class="work work--2">
             {publications.map((pub) => (
-              <article class="panel">
-                <p class="panel-num">
-                  {pub.data.venue}
-                  {pub.data.year && ` · ${pub.data.year}`}
-                </p>
+              <li class="work-item">
                 <h3>
                   {pub.data.url ? (
                     <a href={pub.data.url} target="_blank" rel="noopener">
@@ -115,10 +102,14 @@ const achievements = (await getCollection('achievements')).sort(
                     pub.data.title
                   )}
                 </h3>
-                {pub.data.isbn && <p>ISBN {pub.data.isbn}</p>}
-              </article>
+                <p class="work-meta">
+                  {pub.data.venue}
+                  {pub.data.year && `, ${pub.data.year}`}
+                  {pub.data.isbn && ` — ISBN ${pub.data.isbn}`}
+                </p>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
     )
@@ -130,9 +121,6 @@ const achievements = (await getCollection('achievements')).sort(
       <section class="section section--wash">
         <div class="container">
           <div class="section-head">
-            <p class="section-index">
-              <span>03</span> Recognition
-            </p>
             <h2 class="section-title">Milestones</h2>
           </div>
 
@@ -141,7 +129,7 @@ const achievements = (await getCollection('achievements')).sort(
               <article class="shot">
                 {item.data.image && (
                   <div class="shot-img">
-                    <img src={item.data.image} alt={item.data.title} loading="lazy" decoding="async" />
+                    <img src={item.data.image} alt={item.data.title} loading="lazy" decoding="async" data-dither />
                   </div>
                 )}
                 <div class="shot-body">
@@ -168,9 +156,9 @@ const achievements = (await getCollection('achievements')).sort(
 </Base>
 
 <style>
+
   .updated-stamp {
-    font-family: var(--mono);
-    font-size: 0.74rem;
+    font-size: var(--t-xs);
     color: var(--text-faint);
     padding: 2rem 0;
     margin: 0;

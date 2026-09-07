@@ -12,7 +12,7 @@ const projects = (await getCollection('projects'))
 ---
 
 <Base title="Projects" description="Things I've built — Salesforce platform work, applied AI systems, and computer vision.">
-  <Hero eyebrow="Work" compact>
+  <Hero compact>
     <h1>Projects</h1>
     <p class="hero-lead">
       Platform engineering, applied AI, and a long tail of computer vision work
@@ -31,26 +31,19 @@ const projects = (await getCollection('projects'))
             </p>
           </div>
         ) : (
-          <div class="grid grid--3">
-            {projects.map((project, i) => (
-              <article class="panel">
-                <p class="panel-num">P/{String(i + 1).padStart(2, '0')}</p>
+          <ul class="work work--2">
+            {projects.map((project) => (
+              <li class="work-item">
                 <h3>
                   <a href={`/projects/${project.id}`}>{project.data.title}</a>
                 </h3>
                 <p>{project.data.summary}</p>
                 {project.data.stack.length > 0 && (
-                  <div class="panel-foot">
-                    <ul class="tags">
-                      {project.data.stack.slice(0, 4).map((tech) => (
-                        <li>{tech}</li>
-                      ))}
-                    </ul>
-                  </div>
+                  <p class="work-meta">{project.data.stack.join(', ')}</p>
                 )}
-              </article>
+              </li>
             ))}
-          </div>
+          </ul>
         )
       }
     </div>
