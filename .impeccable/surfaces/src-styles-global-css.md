@@ -14,9 +14,10 @@ stages/backlinks, Keystatic editability, RSS and stable URLs.
 ## Direction contract
 
 THESIS: One dithered surface, sitewide. Dithering is a reproduction technique
-under a fixed ink budget, so it appears only where a real image is reproduced —
-never as procedural wallpaper. Refuses the animated noise field, the mono-caps
-"technical" label kit, and the eyebrow-above-heading.
+under a fixed ink budget, so it only ever renders something real — photographs
+through the CPU engine, and the actual headline type through the GPU hero. Never
+procedural wallpaper. Refuses the mono-caps "technical" label kit and the
+eyebrow-above-heading.
 
 OWN-WORLD: Green-black ground #0d1310 over soil #080c0a. One five-ink dither
 ramp, #070b09 → #dfe3cf, at one 3px dot pitch on every dithered surface. Stage
@@ -28,7 +29,9 @@ STORY: The reader sees a garden whose confidence levels are visible, picks the
 note that is settled enough, and follows its links outward.
 
 FIRST VIEWPORT: Name and lead at the page's left spine with the dithered
-portrait beside them, over a hairline into the note index. The garden-plot
+portrait beside them, over a hairline into the note index. The headline is drawn
+by the WebGL hero (dither-hero/) from the h1's own text and font; the DOM h1
+stays put at opacity 0 and returns if the canvas fails. The garden-plot
 visualisation was built and then removed at the user's request; stage stays
 legible as the coloured rail on each index row, not as a chart.
 

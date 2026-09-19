@@ -2,12 +2,9 @@
 const { pathname } = Astro.url;
 
 const links = [
-  { href: '/notes', label: 'Notes' },
-  { href: '/posts', label: 'Posts' },
   { href: '/projects', label: 'Projects' },
+  { href: '/photography', label: 'Photography' },
   { href: '/links', label: 'Links' },
-  { href: '/now', label: 'Now' },
-  { href: '/about', label: 'About' },
 ];
 
 const isCurrent = (href: string) =>
@@ -17,12 +14,7 @@ const isCurrent = (href: string) =>
 <header class="site-header">
   <div class="container">
     <nav class="nav" aria-label="Primary">
-      <a href="/" class="nav-brand">
-        <svg class="nav-mark" viewBox="0 0 22 22" aria-hidden="true" focusable="false">
-          <path d="M5 17.5V13M11 17.5V8M17 17.5V3.5" />
-        </svg>
-        <span>rajarshi lahiri<span class="dot">.</span></span>
-      </a>
+      <a href="/" class="nav-brand">rajarshi lahiri</a>
 
       <div class="nav-links">
         {links.map((link) => (
@@ -35,17 +27,6 @@ const isCurrent = (href: string) =>
           </a>
         ))}
       </div>
-
-      <details class="nav-toggle">
-        <summary aria-label="Menu"><svg class="icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12M2 8h12M2 12h12" /></svg></summary>
-        <div class="nav-menu">
-          {links.map((link) => (
-            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </details>
     </nav>
   </div>
 </header>

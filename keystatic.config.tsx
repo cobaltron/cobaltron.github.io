@@ -32,11 +32,6 @@ const storageKind =
   import.meta.env.PUBLIC_KEYSTATIC_STORAGE ??
   (import.meta.env.PROD ? 'github' : 'local');
 
-const tags = fields.array(fields.text({ label: 'Tag' }), {
-  label: 'Tags',
-  itemLabel: (props) => props.value,
-});
-
 export default config({
   storage:
     storageKind === 'github'
@@ -47,97 +42,14 @@ export default config({
       : { kind: 'local' },
 
   ui: {
-    brand: { name: 'cobaltron garden' },
+    brand: { name: 'cobaltron' },
     navigation: {
-      Garden: ['notes'],
-      Writing: ['posts'],
-      Work: ['projects', 'roles'],
-      Collected: ['links', 'photos'],
-      Archive: ['publications', 'achievements'],
-      Pages: ['about', 'now', 'photography'],
+      Content: ['projects', 'links', 'photos'],
+      Pages: ['photography'],
     },
   },
 
   collections: {
-    notes: collection({
-      label: 'Notes',
-      slugField: 'title',
-      path: 'src/content/notes/*',
-      format: { contentField: 'content' },
-      entryLayout: 'content',
-      columns: ['title', 'stage'],
-      schema: {
-        title: fields.slug({
-          name: {
-            label: 'Title',
-            description: 'Also the wiki-link target — [[Title]] resolves here.',
-          },
-        }),
-        summary: fields.text({
-          label: 'Summary',
-          description: 'One line, shown in listings.',
-          multiline: true,
-        }),
-        stage: fields.select({
-          label: 'Growth stage',
-          options: [
-            { label: 'Seedling — rough and early', value: 'seedling' },
-            { label: 'Budding — taking shape', value: 'budding' },
-            { label: 'Evergreen — tended and stable', value: 'evergreen' },
-          ],
-          defaultValue: 'seedling',
-        }),
-        tags,
-        planted: fields.date({
-          label: 'Planted',
-          description: 'When this note first appeared.',
-          validation: { isRequired: true },
-        }),
-        tended: fields.date({
-          label: 'Last tended',
-          description: 'Leave empty if it has not been revised.',
-        }),
-        draft: fields.checkbox({
-          label: 'Draft',
-          description: 'Hidden from the published site.',
-          defaultValue: false,
-        }),
-        content: fields.mdx({
-          label: 'Content',
-          description: 'Use [[Note Title]] to link to another note.',
-          options: { image: { directory: 'public/img/content', publicPath: '/img/content/' } },
-        }),
-      },
-    }),
-
-    posts: collection({
-      label: 'Posts',
-      slugField: 'title',
-      path: 'src/content/posts/*',
-      format: { contentField: 'content' },
-      entryLayout: 'content',
-      columns: ['title', 'published'],
-      schema: {
-        title: fields.slug({ name: { label: 'Title' } }),
-        summary: fields.text({
-          label: 'Summary',
-          multiline: true,
-          validation: { isRequired: true },
-        }),
-        published: fields.date({
-          label: 'Published',
-          validation: { isRequired: true },
-        }),
-        updated: fields.date({ label: 'Updated' }),
-        tags,
-        draft: fields.checkbox({ label: 'Draft', defaultValue: false }),
-        content: fields.mdx({
-          label: 'Content',
-          options: { image: { directory: 'public/img/content', publicPath: '/img/content/' } },
-        }),
-      },
-    }),
-
     projects: collection({
       label: 'Projects',
       slugField: 'title',
@@ -160,14 +72,9 @@ export default config({
         }),
         repo: fields.url({ label: 'Repository URL' }),
         demo: fields.url({ label: 'Live demo URL' }),
-        featured: fields.checkbox({
-          label: 'Featured',
-          description: 'Surfaced on the home page.',
-          defaultValue: false,
-        }),
         order: fields.integer({
           label: 'Sort order',
-          description: 'Lower sorts first.',
+          description: 'Lower sorts first. The first four appear on the home page.',
           defaultValue: 99,
         }),
         draft: fields.checkbox({ label: 'Draft', defaultValue: false }),
@@ -197,7 +104,6 @@ export default config({
             'Your commentary. This is the point of the section — a link cannot be published without it.',
           multiline: true,
         }),
-        tags,
         added: fields.date({ label: 'Added', validation: { isRequired: true } }),
         draft: fields.checkbox({
           label: 'Draft',
@@ -229,86 +135,9 @@ export default config({
         order: fields.integer({ label: 'Sort order', defaultValue: 99 }),
       },
     }),
-
-    publications: collection({
-      label: 'Publications',
-      slugField: 'title',
-      path: 'src/content/publications/*',
-      format: 'json',
-      columns: ['title', 'year'],
-      schema: {
-        title: fields.slug({ name: { label: 'Title' } }),
-        venue: fields.text({ label: 'Venue', validation: { isRequired: true } }),
-        isbn: fields.text({ label: 'ISBN' }),
-        year: fields.integer({ label: 'Year' }),
-        url: fields.url({ label: 'URL' }),
-        order: fields.integer({ label: 'Sort order', defaultValue: 99 }),
-      },
-    }),
-
-    roles: collection({
-      label: 'Work experience',
-      slugField: 'title',
-      path: 'src/content/roles/*',
-      format: 'json',
-      columns: ['title', 'org'],
-      schema: {
-        title: fields.slug({ name: { label: 'Job title' } }),
-        org: fields.text({ label: 'Organisation', validation: { isRequired: true } }),
-        period: fields.text({
-          label: 'Period',
-          description: 'e.g. "2023 — present" or "Previous"',
-          validation: { isRequired: true },
-        }),
-        current: fields.checkbox({ label: 'Current role', defaultValue: false }),
-        detail: fields.text({
-          label: 'What you did',
-          multiline: true,
-          validation: { isRequired: true },
-        }),
-        order: fields.integer({
-          label: 'Sort order',
-          description: 'Lower sorts first.',
-          defaultValue: 99,
-        }),
-      },
-    }),
-
-    achievements: collection({
-      label: 'Achievements',
-      slugField: 'title',
-      path: 'src/content/achievements/*',
-      format: 'json',
-      columns: ['title', 'year'],
-      schema: {
-        title: fields.slug({ name: { label: 'Title' } }),
-        detail: fields.text({ label: 'Detail', multiline: true }),
-        image: fields.text({
-          label: 'Image path',
-          description: 'e.g. /img/ac1.jpg',
-        }),
-        year: fields.integer({ label: 'Year' }),
-        order: fields.integer({ label: 'Sort order', defaultValue: 99 }),
-      },
-    }),
   },
 
   singletons: {
-    about: singleton({
-      label: 'About page',
-      path: 'src/content/pages/about',
-      format: { contentField: 'content' },
-      entryLayout: 'content',
-      schema: {
-        title: fields.text({ label: 'Title', defaultValue: 'About' }),
-        updated: fields.date({ label: 'Last updated' }),
-        content: fields.mdx({
-          label: 'Body',
-          options: { image: { directory: 'public/img/content', publicPath: '/img/content/' } },
-        }),
-      },
-    }),
-
     photography: singleton({
       label: 'Photography page',
       path: 'src/content/pages/photography',
@@ -322,24 +151,6 @@ export default config({
         }),
         content: fields.mdx({
           label: 'Intro',
-          options: { image: { directory: 'public/img/content', publicPath: '/img/content/' } },
-        }),
-      },
-    }),
-
-    now: singleton({
-      label: 'Now page',
-      path: 'src/content/pages/now',
-      format: { contentField: 'content' },
-      entryLayout: 'content',
-      schema: {
-        title: fields.text({ label: 'Title', defaultValue: 'Now' }),
-        updated: fields.date({
-          label: 'Last updated',
-          description: 'A /now page is only useful if this is honest.',
-        }),
-        content: fields.mdx({
-          label: 'Body',
           options: { image: { directory: 'public/img/content', publicPath: '/img/content/' } },
         }),
       },

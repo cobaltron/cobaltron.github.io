@@ -1,76 +1,90 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,400..600&display=swap');
-
 /* ============================================================
-   Tokens — one world: a green-black garden reproduced in five inks.
+   Tokens — one world: ink on paper, reproduced by dithering.
 
-   Dithering is this site's material, so its ink ramp and dot pitch live here
-   as tokens rather than as constants in the script. public/js/dither.js reads
-   --ink-* and --dither-cell off :root, which is what keeps one palette and one
-   dot size across every dithered surface.
+   Dithering is the site's only material, so its ink ramp and dot pitch live
+   here as tokens rather than as constants in the script. public/js/dither.js
+   reads --ink-* and --dither-cell off :root, which is what keeps one palette
+   and one dot size across every dithered surface.
+
    ============================================================ */
 :root {
   /* ground */
-  --bg: #0d1310;
-  --bg-alt: #111814;
-  --surface: #141c17;
-  --surface-hi: #18211b;
-  --soil: #080c0a;
+  --paper: #f5f3ed;
+  --paper-dim: #eceade;
+  --paper-sunk: #e7e4d9;
 
   /* ink */
-  --text: #e6e4d9;
-  --text-dim: #99a597;
-  --text-faint: #7f8e7f;
+  --text: #191814;
+  --text-dim: #56534a;
+  --text-faint: #6f6b60;
 
-  --accent: #9ecb8f;
-  --accent-dim: #3f5c40;
-  --accent-deep: #16241a;
+  --line: #dcd8cc;
+  --line-hi: #c4bfb1;
 
-  --line: #202a23;
-  --line-hi: #2f3d33;
+  /* One accent, spent on interaction and nothing else. */
+  --accent: #23457a;
+  /* Selection is a browser surface, not a stray literal: it belongs to the
+     field-ink family so a highlight reads as more of the same blue. */
+  --selection: #dbe3f0;
 
-  /* the one warm signal: focus, and nothing else */
-  --signal: #d9a441;
-
-  /* growth stage, carried by saturation rather than by hue */
-  --stem-seedling: #647563;
-  --stem-budding: #7ca173;
-  --stem-evergreen: #c2d9a4;
-
-  /* dither: five inks, one dot pitch in CSS px */
+  /* dither: blue ink on cream, one dot pitch in CSS px.
+     Photographs quantise through all five steps — the ramp ends *at* --paper,
+     so a dithered photograph dissolves into the page rather than sitting in a
+     box. */
   --dither-cell: 3;
-  --ink-0: #070b09;
-  --ink-1: #1e2f22;
-  --ink-2: #41613f;
-  --ink-3: #84a877;
-  --ink-4: #dfe3cf;
+  --ink-0: #101a28;
+  --ink-1: #2b4463;
+  --ink-2: #6480a4;
+  --ink-3: #b8c6da;
+  --ink-4: #f5f3ed;
 
-  /* Two faces. Literata reads and displays, Archivo carries the interface.
-     There is no third family: code falls back to the platform's own mono,
-     which is for code rather than for looking technical. */
-  --sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --serif: 'Literata', Iowan Old Style, Georgia, serif;
+  /* The page field is a halftone of one ink, so its amplitude is literally
+     dot coverage. Both values are contrast budget: at 24% coverage of
+     --field-ink the ground stays light enough for --text-faint, the faintest
+     type on the site, to hold 4.5:1 over it. Raising either without redoing
+     that sum is how a background starts eating the text. */
+  --field-ink: #cdd7e6;
+  --field-amp: 0.24;
+
+  /* One face. A personal site of lists and photographs does not need two,
+     and a second family is a second thing to keep in agreement. */
+  --sans: 'Archivo', 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* One scale, ratio 1.25 from a 16px base. --t-read is the serif's optical
-     match to --t-base, not another step on the ladder. */
+  /* One scale, ratio 1.25 from a 16px base. */
   --t-xs: 0.8rem;
   --t-base: 1rem;
-  --t-read: 1.125rem;
   --t-md: 1.25rem;
   --t-lg: 1.5625rem;
   --t-xl: 1.953rem;
   --t-2xl: 2.441rem;
-  --t-3xl: 3.052rem;
 
-  /* One tracking value, used only above --t-lg. Nothing is tracked out. */
+  /* Two tracking bands, each tied to a size. A grotesque needs more negative
+     tracking as it grows: -0.02em is correct on a 20px row title and visibly
+     loose on a 39px page title. Both sit inside the -0.04em floor. */
+  --track-display: -0.035em;
   --track-tight: -0.02em;
 
-  --shell: 1160px;
-  --read: 68ch;
+  --shell: 980px;
+  --read: 66ch;
   --pad: 1.5rem;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 
-  color-scheme: dark;
+  color-scheme: light;
+}
+
+/* Metric-matched fallback, so the swap to Archivo does not reflow the page.
+   Archivo's average glyph is 10.7% wider than Arial's (xAvgCharWidth 0.561em
+   against 0.507em, read from the shipped TTF), which is how much the whole
+   layout would otherwise shift the moment the webfont lands. Every number
+   below is derived from that ratio, not estimated. */
+@font-face {
+  font-family: 'Archivo Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 110.69%;
+  ascent-override: 79.32%;
+  descent-override: 18.97%;
+  line-gap-override: 0%;
 }
 
 *,
@@ -81,8 +95,8 @@
 
 html {
   scroll-behavior: smooth;
-  /* keeps anchored headings clear of the sticky header */
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 5rem;
+  caret-color: var(--accent);
 }
 
 body {
@@ -90,17 +104,45 @@ body {
   font-family: var(--sans);
   font-size: var(--t-base);
   line-height: 1.6;
-  background: var(--bg);
+  background: var(--paper);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* Content rides above the page field on its own layer. The field is a
+   positioned element, so in-flow content has to be positioned too or it would
+   paint underneath it. */
 main {
   flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   The page field — the material as ground.
+
+   Fixed, so scrolling never re-lays it out, and opaque: its top ink *is*
+   --paper, so the canvas does not sit on the page background, it is the page
+   background. Nothing here may cost the text any contrast — the mask in
+   dither.js keeps the reading column all but flat, and this layer is inert to
+   the pointer.
+   ============================================================ */
+.page-field {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  image-rendering: pixelated;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease);
+}
+.page-field.is-ready {
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -111,8 +153,6 @@ main {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
@@ -122,33 +162,33 @@ img {
   display: block;
 }
 
+/* One link treatment everywhere: ink text on a quiet rule, both going accent
+   on hover. Colour alone never carries the affordance — and because the rule
+   is the whole affordance, it is --text-faint (4.8:1), not a hairline token.
+   --line-* are for borders, which are decoration and may be faint. */
 a {
-  color: var(--accent);
-  text-decoration: none;
-  text-underline-offset: 3px;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--text-faint);
   text-decoration-thickness: 1px;
-  transition: color 0.2s var(--ease);
+  text-underline-offset: 3px;
+  transition: color 0.18s var(--ease), text-decoration-color 0.18s var(--ease);
 }
 a:hover {
-  color: var(--text);
+  color: var(--accent);
+  text-decoration-color: var(--accent);
 }
 
-/* ============================================================
-   Browser surfaces — the parts the browser draws still belong here.
-   ============================================================ */
+/* The surfaces the browser draws still belong to the design. Selection, caret,
+   focus and the scrollbar all ship defaults that belong to no design system —
+   these are pulled back into the blue-on-cream world. */
 ::selection {
-  background: var(--accent-deep);
+  background: var(--selection);
   color: var(--text);
-}
-
-:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 3px;
 }
 
 html {
-  caret-color: var(--accent);
-  scrollbar-color: var(--line-hi) var(--bg);
+  scrollbar-color: var(--line-hi) var(--paper);
   scrollbar-width: thin;
 }
 ::-webkit-scrollbar {
@@ -156,26 +196,43 @@ html {
   height: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--paper);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--line-hi);
-  border: 3px solid var(--bg);
+  border: 3px solid var(--paper);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-dim);
+  background: var(--accent);
 }
 
-/* Dates and figures line up in a column rather than shuffling per glyph. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 time,
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ============================================================
    Dithered images — the one place the material appears.
-   The canvas backing store is measured in dots, so CSS scales it back up
-   and one dot is --dither-cell CSS pixels wide on every screen.
+   The canvas backing store is measured in dots, so CSS scales it back up and
+   one dot is --dither-cell CSS pixels wide on every screen, whatever the
+   device pixel ratio.
    ============================================================ */
 .dither {
   position: relative;
@@ -196,40 +253,45 @@ time,
   inset: 0;
   image-rendering: pixelated;
   opacity: 0;
-  transition: opacity 0.45s var(--ease);
+  transition: opacity 0.4s var(--ease);
 }
 .dither.is-ready > canvas {
   opacity: 1;
 }
-/* The source stays in the DOM for alt text and for the no-JS case; once the
-   dither has painted, it is the thing that shows. */
 .dither.is-ready > img {
   opacity: 0;
 }
+/* A developing print is already its own entrance — at zero coverage the canvas
+   is solid --paper. Cross-fading it in as well would read as a plain fade over
+   the top of the develop, so this path drops both transitions. */
+.dither--print > canvas,
+.dither--print > img {
+  transition: none;
+}
 
+/* ============================================================
+   Shell
+   ============================================================ */
 .container {
-  width: 100%;
-  max-width: var(--shell);
-  margin: 0 auto;
-  padding: 0 var(--pad);
+  width: min(100% - (var(--pad) * 2), var(--shell));
+  margin-inline: auto;
 }
 .container--read {
-  max-width: calc(var(--read) + var(--pad) * 2);
+  max-width: var(--read);
 }
 
 .skip-link {
   position: absolute;
   left: -9999px;
   top: 0;
+  background: var(--text);
+  color: var(--paper);
+  padding: 0.6rem 1rem;
   z-index: 100;
-  padding: 0.75rem 1.1rem;
-  background: var(--accent);
-  color: var(--bg);
-  font-size: var(--t-xs);
 }
 .skip-link:focus {
-  left: 1rem;
-  top: 1rem;
+  left: var(--pad);
+  top: 0.5rem;
 }
 
 /* ============================================================
@@ -238,12 +300,10 @@ time,
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 60;
-  background: rgba(13, 19, 16, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  z-index: 50;
+  background: var(--paper);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.25s var(--ease);
+  transition: border-color 0.2s var(--ease);
 }
 .site-header.is-stuck {
   border-bottom-color: var(--line);
@@ -251,1134 +311,384 @@ time,
 
 .nav {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1.05rem 0;
+  gap: 1.5rem;
+  padding: 1.15rem 0;
+  flex-wrap: wrap;
 }
 
 .nav-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  font-size: var(--t-base);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: var(--track-tight);
+  text-decoration: none;
   color: var(--text);
-  flex: none;
 }
-.nav-mark {
-  width: 22px;
-  height: 22px;
-  flex: none;
-  /* Three stems at the plot's three heights: the site's own mark, drawn on
-     the same stroke weight as every other icon. */
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-}
-.nav-brand .dot {
+.nav-brand:hover {
   color: var(--accent);
 }
 
 .nav-links {
   display: flex;
-  align-items: center;
-  gap: 1.6rem;
+  gap: 1.5rem;
 }
-
 .nav-link {
-  font-size: var(--t-xs);
+  font-size: var(--t-base);
   color: var(--text-dim);
-  position: relative;
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
 }
-.nav-link:hover,
-.nav-link[aria-current='page'] {
+.nav-link:hover {
   color: var(--accent);
 }
-.nav-link[aria-current='page']::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.45rem;
-  height: 1px;
-  background: var(--accent);
-}
-
-/* Mobile: collapse into a details/summary disclosure */
-.nav-toggle {
-  display: none;
-}
-
-@media (max-width: 780px) {
-  .nav-links {
-    display: none;
-  }
-  .nav-toggle {
-    display: block;
-    position: relative;
-  }
-  .nav-toggle summary {
-    list-style: none;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--line-hi);
-    color: var(--text);
-    font-size: var(--t-base);
-  }
-  .nav-toggle summary::-webkit-details-marker {
-    display: none;
-  }
-  .nav-toggle[open] summary {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .nav-menu {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 0.6rem);
-    min-width: 190px;
-    background: var(--surface);
-    border: 1px solid var(--line-hi);
-    padding: 0.5rem 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .nav-menu a {
-    padding: 0.6rem 1.1rem;
-    font-size: var(--t-xs);
-    color: var(--text-dim);
-  }
-  .nav-menu a:hover,
-  .nav-menu a[aria-current='page'] {
-    color: var(--accent);
-    background: var(--surface-hi);
-  }
+.nav-link[aria-current='page'] {
+  color: var(--text);
+  border-bottom-color: var(--text);
 }
 
 /* ============================================================
-   Buttons
+   Page head — one pattern for every page, including home.
+   ============================================================ */
+.head {
+  padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2rem, 4vw, 3rem);
+}
+.head h1 {
+  margin: 0 0 0.9rem;
+  font-size: clamp(var(--t-xl), 5vw, var(--t-2xl));
+  font-weight: 600;
+  letter-spacing: var(--track-display);
+  line-height: 1.1;
+  /* A display measure. Headings read worse than body at the same width, so
+     they get a narrower one, not the column's. */
+  max-width: 20ch;
+  text-wrap: balance;
+}
+.lead {
+  margin: 0;
+  /* 52ch, not 58: at 1.25rem that renders just inside the 66ch body measure it
+     sits above in the same column, so the two rags agree instead of the larger
+     type running wider. */
+  max-width: 52ch;
+  font-size: var(--t-md);
+  line-height: 1.55;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+/* ============================================================
+   Sections and lists
+   ============================================================ */
+.section {
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+  border-top: 1px solid var(--line);
+}
+
+.section-title {
+  margin: 0 0 1.75rem;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+.section-more {
+  display: inline-block;
+  margin-top: 2rem;
+  font-size: var(--t-base);
+  color: var(--text-dim);
+}
+
+/* A row list: title, one line of prose, a quiet line of facts. Projects and
+   links share it, so the two read as the same kind of object. */
+.rows {
+  display: grid;
+  gap: 2.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.row h2,
+.row h3 {
+  margin: 0 0 0.4rem;
+  max-width: 46ch;
+  font-size: var(--t-md);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: var(--track-tight);
+  text-wrap: balance;
+  /* Link titles are arbitrary text from elsewhere; a long unbroken token must
+     wrap rather than push the column. */
+  overflow-wrap: break-word;
+}
+.row p {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--text-dim);
+}
+.row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin: 0.55rem 0 0;
+  font-size: var(--t-xs);
+  color: var(--text-faint);
+  /* Years and counts sit in a column down the list; lining figures keep them
+     from shuffling row to row. */
+  font-variant-numeric: tabular-nums;
+}
+
+.out {
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  margin-left: 0.4em;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  color: var(--text-faint);
+  vertical-align: baseline;
+}
+a:hover .out {
+  color: var(--accent);
+}
+
+/* ============================================================
+   Buttons — one, in one weight.
    ============================================================ */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--text-faint);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
   font-size: var(--t-base);
-  font-weight: 500;
-  padding: 0.62rem 1.1rem;
-  color: var(--bg);
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  transition: background 0.2s var(--ease), color 0.2s var(--ease);
-  white-space: nowrap;
+  text-decoration: none;
   cursor: pointer;
+  transition: border-color 0.18s var(--ease), color 0.18s var(--ease);
 }
 .btn:hover {
-  background: transparent;
-  color: var(--accent);
-}
-.btn--ghost {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--line-hi);
-}
-.btn--ghost:hover {
-  color: var(--accent);
   border-color: var(--accent);
-  background: transparent;
-}
-
-/* ============================================================
-   Hero
-   ============================================================ */
-.hero {
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid var(--line);
-}
-
-.hero .container {
-  position: relative;
-  z-index: 2;
-  padding-top: 5.5rem;
-  padding-bottom: 4.5rem;
-}
-
-/* A shorter band for section index pages */
-.hero--compact .container {
-  padding-top: 3.75rem;
-  padding-bottom: 3rem;
-}
-
-.hero h1 {
-  font-family: var(--serif);
-  font-size: clamp(var(--t-2xl), 5.4vw, var(--t-3xl));
-  font-variation-settings: 'opsz' 72;
-  line-height: 1.06;
-  letter-spacing: var(--track-tight);
-  font-weight: 600;
-  margin: 0 0 1.2rem;
-  max-width: 20ch;
-}
-.hero h1 em {
-  font-style: normal;
   color: var(--accent);
-}
-
-.hero-lead {
-  font-size: var(--t-read);
-  color: var(--text-dim);
-  max-width: 54ch;
-  margin: 0 0 2rem;
-}
-.hero-lead:last-child {
-  margin-bottom: 0;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-}
-
-/* The text column takes the slack so the portrait sits flush with the right
-   edge of the container, aligning with the nav above it. The lead keeps its
-   own max-width, so absorbing the slack costs nothing in measure. Home and
-   About share this. */
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: clamp(1.5rem, 5vw, 4rem);
-  align-items: start;
-}
-
-.portrait {
-  position: relative;
-  width: clamp(170px, 22vw, 240px);
-  aspect-ratio: 1;
-  border: 1px solid var(--line-hi);
-  border-radius: 8px;
-  background: var(--soil);
-  overflow: hidden;
-  flex: none;
-}
-/* The frame is the only thing that survives the dither: the ink ramp does the
-   rest, so there is no tinted overlay to reconcile with it. */
-.portrait::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 1px solid var(--line-hi);
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@media (max-width: 860px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 2.25rem;
-  }
-  .portrait {
-    order: -1;
-  }
-  .hero .container {
-    padding-top: 3.5rem;
-    padding-bottom: 3rem;
-  }
-}
-
-/* ============================================================
-   Sections
-   ============================================================ */
-.section {
-  padding: 5rem 0;
-  border-bottom: 1px solid var(--line);
-}
-.section:last-child {
-  border-bottom: 0;
-}
-.section--tight {
-  padding: 3.5rem 0;
-}
-.section--wash {
-  background-color: var(--bg-alt);
-}
-
-.section-head {
-  margin-bottom: 2.5rem;
-}
-
-.section-title {
-  font-family: var(--serif);
-  font-size: clamp(var(--t-xl), 3.4vw, var(--t-2xl));
-  font-variation-settings: 'opsz' 48;
-  line-height: 1.18;
-  letter-spacing: var(--track-tight);
-  font-weight: 600;
-  margin: 0 0 0.6rem;
-}
-
-.section-sub {
-  color: var(--text-dim);
-  margin: 0;
-  max-width: 62ch;
-}
-
-.section-more {
-  font-size: var(--t-xs);
-  margin-top: 2rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* ============================================================
-   Grid of panels — shared hairlines, no shadows
-   ============================================================ */
-.grid {
-  display: grid;
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-.grid--3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-@media (max-width: 940px) {
-  .grid--3 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 640px) {
-  .grid--3 {
-    grid-template-columns: 1fr;
-  }
-}
-
-.label {
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  margin: 1.2rem 0 0.5rem;
-}
-
-/* ============================================================
-   Tags
-   ============================================================ */
-.tags {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin: 0;
-  padding: 0;
-}
-.tags li,
-.tag {
-  font-size: var(--t-xs);
-  color: var(--text-dim);
-  border: 1px solid var(--line-hi);
-  padding: 0.2rem 0.55rem;
-  white-space: nowrap;
-}
-a.tag:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-/* ============================================================
-   Growth stage — a dithered density meter
-   ============================================================ */
-.stage {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  white-space: nowrap;
-}
-.stage-dots {
-  display: inline-flex;
-  gap: 2px;
-}
-.stage-dot {
-  width: 9px;
-  height: 9px;
-  border: 1px solid var(--line);
-  background: transparent;
-}
-/* Lit steps read by fill, not by pattern: at 9px a pattern difference was
-   invisible, and a dot lattice here would be dithering with nothing to
-   reproduce. */
-.stage-dot.is-lit {
-  border-color: var(--stem-budding);
-  background: var(--stem-budding);
-}
-.stage[data-stage='evergreen'] {
-  color: var(--accent);
-}
-.stage[data-stage='budding'] {
-  color: var(--text-dim);
-}
-
-/* ============================================================
-   Entry (note / post / project) — long-form reading
-   ============================================================ */
-.entry-header {
-  padding: 3.5rem 0 2.25rem;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 2.75rem;
-}
-.entry-title {
-  font-family: var(--serif);
-  font-size: clamp(var(--t-xl), 4.4vw, var(--t-2xl));
-  font-variation-settings: 'opsz' 60;
-  line-height: 1.14;
-  letter-spacing: var(--track-tight);
-  font-weight: 600;
-  margin: 0.9rem 0 0.9rem;
-}
-.entry-summary {
-  font-family: var(--serif);
-  font-size: var(--t-md);
-  line-height: 1.55;
-  color: var(--text-dim);
-  margin: 0 0 1.5rem;
-  max-width: 58ch;
-}
-.entry-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 1.4rem;
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-}
-.entry-meta time {
-  white-space: nowrap;
-}
-.entry-meta .sep {
-  color: var(--line-hi);
-}
-
-/* stage disclosure under the header */
-.stage-note {
-  margin-top: 1.4rem;
-  padding: 0.85rem 1.1rem;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  font-size: var(--t-base);
-  color: var(--text-dim);
-  display: flex;
-  gap: 0.8rem;
-  align-items: baseline;
-}
-.stage-note strong {
-  color: var(--text);
-  font-weight: 600;
 }
 
 /* ============================================================
    Prose
    ============================================================ */
 .prose {
-  font-family: var(--serif);
-  font-variation-settings: 'opsz' 14;
-  font-size: var(--t-read);
-  line-height: 1.72;
-  color: var(--text);
-  max-width: var(--read);
+  font-size: var(--t-base);
+  line-height: 1.7;
+  color: var(--text-dim);
+  text-wrap: pretty;
+  overflow-wrap: break-word;
 }
-/* Reset first, then space siblings. `.prose p { margin: 0 }` would out-rank
-   the sibling rule on specificity (0,1,1 vs 0,1,0) and collapse paragraph gaps. */
 .prose > * {
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0;
 }
 .prose > * + * {
-  margin-top: 1.35em;
+  margin-top: 1.25rem;
 }
 .prose h2,
-.prose h3,
-.prose h4 {
+.prose h3 {
   color: var(--text);
+  letter-spacing: var(--track-tight);
+  margin-top: 2.5rem;
   line-height: 1.25;
-  margin-top: 2.6em;
-  margin-bottom: 0.7em;
-  scroll-margin-top: 6rem;
+  font-weight: 600;
+  max-width: 34ch;
+  text-wrap: balance;
 }
 .prose h2 {
   font-size: var(--t-lg);
-  font-weight: 700;
-  padding-top: 1.6rem;
-  border-top: 1px solid var(--line);
 }
 .prose h3 {
   font-size: var(--t-md);
-  font-weight: 600;
 }
-.prose h4 {
-  font-size: var(--t-base);
-  font-weight: 600;
-  color: var(--text-dim);
-}
-.prose a {
-  text-decoration: underline;
-  text-decoration-color: var(--accent-dim);
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
-}
-.prose a:hover {
-  text-decoration-color: var(--accent);
-}
-.prose strong {
+/* highlighter:start - generated by scripts/gen-highlighter.py, do not hand-edit */
+.prose strong,
+.about strong {
+  /* Emphasis on a printed sheet is not a heavier weight, it is someone taking
+     a marker to the page afterwards. The stroke is a rough SVG rather than a
+     linear-gradient because a gradient's edges are perfectly straight, which
+     is the one thing a real highlighter never produces.
+
+     This rides on <strong>, not <mark>, so the bold button in Keystatic keeps
+     working and nobody has to type an element into their prose.
+
+     Regenerate with: python scripts/gen-highlighter.py */
+  font-weight: inherit;
   color: var(--text);
-  font-weight: 600;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-7 -4 214 48' preserveAspectRatio='none'><path d='M1.5%2C7.3C3.5%2C7.6 8.1%2C9.0 13.3%2C9.3C18.4%2C9.6 26.1%2C9.3 32.5%2C9.1C39.0%2C8.8 45.4%2C7.9 51.8%2C7.6C58.2%2C7.4 64.7%2C7.3 71.1%2C7.6C77.5%2C7.9 83.9%2C10.4 90.4%2C9.4C96.8%2C8.4 103.2%2C1.7 109.6%2C1.6C116.1%2C1.4 122.5%2C7.7 128.9%2C8.4C135.3%2C9.0 141.8%2C5.7 148.2%2C5.4C154.6%2C5.1 161.0%2C6.8 167.5%2C6.5C173.9%2C6.2 180.3%2C4.3 186.7%2C3.7C193.1%2C3.2 202.6%2C3.4 205.8%2C3.4L199.8%2C32.3199.8%2C32.3C197.6%2C32.5 192.1%2C33.6 186.7%2C33.6C181.3%2C33.6 173.9%2C32.4 167.5%2C32.1C161.0%2C31.9 154.6%2C32.6 148.2%2C32.1C141.8%2C31.7 135.3%2C30.0 128.9%2C29.4C122.5%2C28.8 116.1%2C29.2 109.6%2C28.7C103.2%2C28.2 96.8%2C26.7 90.4%2C26.2C83.9%2C25.8 77.5%2C25.8 71.1%2C26.1C64.7%2C26.4 58.2%2C26.8 51.8%2C28.0C45.4%2C29.3 39.0%2C32.6 32.5%2C33.5C26.1%2C34.4 19.9%2C33.0 13.3%2C33.2C6.6%2C33.5 -3.8%2C34.8 -7.3%2C35.2Z' fill='%23e8b93c' fill-opacity='.42'/><path d='M48.5%2C20.6C50.2%2C20.0 55.0%2C18.0 58.2%2C17.0C61.4%2C16.1 64.6%2C15.9 67.8%2C14.8C71.1%2C13.7 74.3%2C11.4 77.5%2C10.7C80.7%2C9.9 83.9%2C10.7 87.1%2C10.4C90.4%2C10.1 93.6%2C8.8 96.8%2C8.8C100.0%2C8.7 103.2%2C9.4 106.4%2C10.2C109.7%2C11.0 112.9%2C12.7 116.1%2C13.7C119.3%2C14.7 122.5%2C15.0 125.7%2C16.2C129.0%2C17.4 133.8%2C20.1 135.4%2C20.9135.4%2C20.9C133.8%2C21.2 129.0%2C21.9 125.7%2C22.8C122.5%2C23.6 119.3%2C25.3 116.1%2C26.0C112.9%2C26.6 109.7%2C26.4 106.4%2C26.7C103.2%2C27.0 100.0%2C27.1 96.8%2C27.6C93.6%2C28.0 90.4%2C29.3 87.1%2C29.2C83.9%2C29.1 80.7%2C27.5 77.5%2C27.2C74.3%2C26.8 71.1%2C27.7 67.8%2C27.1C64.6%2C26.5 61.4%2C24.6 58.2%2C23.6C55.0%2C22.5 50.2%2C21.1 48.5%2C20.6Z' fill='%23e8b93c' fill-opacity='.24'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  /* the ink overshoots the words, and the negative margin keeps it from
+     pushing the line's measure out */
+  padding: 0.16em 0.22em 0.2em;
+  margin: 0 -0.06em;
+  /* one stroke per line when a highlight wraps, instead of a single box
+     stretched across the break */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
+
+.prose p:nth-of-type(3n + 2) strong,
+.about p:nth-of-type(3n + 2) strong {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-7 -4 214 48' preserveAspectRatio='none'><path d='M-1.9%2C6.1C0.6%2C6.3 7.5%2C5.4 13.3%2C7.3C19.0%2C9.1 26.1%2C17.1 32.5%2C17.2C39.0%2C17.3 45.4%2C9.8 51.8%2C8.0C58.2%2C6.3 64.7%2C7.4 71.1%2C6.6C77.5%2C5.7 83.9%2C3.5 90.4%2C2.9C96.8%2C2.3 103.2%2C2.8 109.6%2C3.0C116.1%2C3.1 122.5%2C3.6 128.9%2C3.7C135.3%2C3.7 141.8%2C3.1 148.2%2C3.4C154.6%2C3.7 161.0%2C5.2 167.5%2C5.4C173.9%2C5.5 180.0%2C4.1 186.7%2C4.4C193.4%2C4.6 204.1%2C6.3 207.6%2C6.7L200.2%2C37.7200.2%2C37.7C197.9%2C37.1 192.2%2C35.5 186.7%2C34.4C181.3%2C33.3 173.9%2C32.0 167.5%2C31.0C161.0%2C30.0 154.6%2C28.6 148.2%2C28.5C141.8%2C28.4 135.3%2C31.0 128.9%2C30.5C122.5%2C30.0 116.1%2C27.6 109.6%2C25.6C103.2%2C23.7 96.8%2C17.7 90.4%2C18.6C83.9%2C19.6 77.5%2C28.6 71.1%2C31.3C64.7%2C33.9 58.2%2C33.9 51.8%2C34.6C45.4%2C35.2 39.0%2C35.1 32.5%2C35.1C26.1%2C35.1 20.2%2C34.7 13.3%2C34.7C6.4%2C34.7 -5.1%2C34.9 -8.8%2C34.9Z' fill='%23e8b93c' fill-opacity='.42'/><path d='M14.0%2C24.2C16.1%2C23.5 22.5%2C21.2 26.8%2C19.9C31.1%2C18.6 35.4%2C17.5 39.7%2C16.5C44.0%2C15.5 48.3%2C14.9 52.6%2C13.8C56.8%2C12.7 61.1%2C10.7 65.4%2C10.1C69.7%2C9.5 74.0%2C9.8 78.3%2C10.2C82.6%2C10.7 86.9%2C11.9 91.1%2C12.7C95.4%2C13.5 99.7%2C14.2 104.0%2C15.1C108.3%2C16.0 112.6%2C16.8 116.9%2C18.3C121.2%2C19.7 127.6%2C22.8 129.7%2C23.7129.7%2C23.7C127.6%2C24.1 121.2%2C25.2 116.9%2C26.2C112.6%2C27.3 108.3%2C29.0 104.0%2C30.1C99.7%2C31.2 95.4%2C32.4 91.1%2C32.9C86.9%2C33.4 82.6%2C33.2 78.3%2C33.2C74.0%2C33.3 69.7%2C33.0 65.4%2C33.1C61.1%2C33.2 56.8%2C34.3 52.6%2C34.0C48.3%2C33.8 44.0%2C32.5 39.7%2C31.5C35.4%2C30.5 31.1%2C29.1 26.8%2C27.9C22.5%2C26.7 16.1%2C24.8 14.0%2C24.2Z' fill='%23e8b93c' fill-opacity='.24'/></svg>");
+}
+
+.prose p:nth-of-type(3n + 3) strong,
+.about p:nth-of-type(3n + 3) strong {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-7 -4 214 48' preserveAspectRatio='none'><path d='M1.7%2C8.1C3.6%2C8.1 8.1%2C8.2 13.3%2C8.2C18.4%2C8.1 26.1%2C8.3 32.5%2C8.1C39.0%2C7.9 45.4%2C6.5 51.8%2C6.7C58.2%2C7.0 64.7%2C10.1 71.1%2C9.8C77.5%2C9.5 83.9%2C5.5 90.4%2C4.9C96.8%2C4.4 103.2%2C6.7 109.6%2C6.3C116.1%2C5.8 122.5%2C1.9 128.9%2C2.1C135.3%2C2.4 141.8%2C7.3 148.2%2C7.8C154.6%2C8.3 161.0%2C5.5 167.5%2C5.1C173.9%2C4.7 180.3%2C4.9 186.7%2C5.3C193.2%2C5.7 202.8%2C7.0 206.0%2C7.3L197.2%2C32.9197.2%2C32.9C195.5%2C32.8 191.7%2C32.0 186.7%2C32.0C181.8%2C32.0 173.9%2C32.8 167.5%2C33.0C161.0%2C33.1 154.6%2C33.0 148.2%2C33.2C141.8%2C33.3 135.3%2C34.2 128.9%2C33.7C122.5%2C33.2 116.1%2C30.3 109.6%2C30.3C103.2%2C30.4 96.8%2C33.8 90.4%2C34.1C83.9%2C34.4 77.5%2C33.0 71.1%2C32.0C64.7%2C30.9 58.2%2C27.3 51.8%2C27.5C45.4%2C27.8 39.0%2C32.7 32.5%2C33.4C26.1%2C34.2 20.1%2C31.0 13.3%2C31.9C6.4%2C32.8 -4.8%2C37.5 -8.4%2C38.6Z' fill='%23e8b93c' fill-opacity='.42'/><path d='M17.7%2C24.1C19.4%2C23.4 24.7%2C21.7 28.1%2C20.1C31.6%2C18.6 35.1%2C16.0 38.6%2C14.7C42.1%2C13.4 45.6%2C13.1 49.1%2C12.2C52.6%2C11.4 56.1%2C10.0 59.6%2C9.7C63.1%2C9.3 66.5%2C9.9 70.0%2C10.1C73.5%2C10.4 77.0%2C10.1 80.5%2C11.1C84.0%2C12.0 87.5%2C14.3 91.0%2C15.8C94.5%2C17.2 98.0%2C18.2 101.5%2C19.6C105.0%2C21.0 110.2%2C23.4 111.9%2C24.1111.9%2C24.1C110.2%2C24.8 105.0%2C26.6 101.5%2C27.8C98.0%2C28.9 94.5%2C30.5 91.0%2C31.1C87.5%2C31.8 84.0%2C31.4 80.5%2C31.8C77.0%2C32.2 73.5%2C33.5 70.0%2C33.7C66.5%2C33.9 63.1%2C33.3 59.6%2C33.2C56.1%2C33.1 52.6%2C33.5 49.1%2C33.0C45.6%2C32.4 42.1%2C30.9 38.6%2C30.1C35.1%2C29.3 31.6%2C29.3 28.1%2C28.3C24.7%2C27.3 19.4%2C24.8 17.7%2C24.1Z' fill='%23e8b93c' fill-opacity='.24'/></svg>");
+}
+
+/* Forced-colours strips background images, so emphasis would vanish entirely.
+   Give the weight back there, and in print, where backgrounds are dropped by
+   default. */
+@media (forced-colors: active) {
+  .prose strong,
+  .about strong {
+    background-image: none;
+    font-weight: 700;
+  }
+}
+
+@media print {
+  .prose strong,
+  .about strong {
+    background-image: none;
+    font-weight: 700;
+  }
+}
+/* highlighter:end */
 .prose ul,
 .prose ol {
-  padding-left: 1.3rem;
-  margin-top: 1.1em;
+  padding-left: 1.2rem;
 }
 .prose li + li {
-  margin-top: 0.5em;
+  margin-top: 0.4rem;
 }
 .prose li::marker {
-  color: var(--accent-dim);
+  color: var(--text-faint);
 }
 .prose blockquote {
-  margin-left: 0;
-  margin-right: 0;
-  padding: 0.2rem 0 0.2rem 1.4rem;
-  border-left: 2px solid var(--accent-dim);
-  font-family: var(--serif);
-  font-size: var(--t-md);
-  font-style: italic;
-  color: var(--text-dim);
-}
-.prose blockquote p {
-  margin: 0;
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--line-hi);
+  color: var(--text-faint);
 }
 .prose hr {
   border: 0;
-  height: 1px;
-  background: var(--line-hi);
-  margin: 2.8em 0;
-}
-.prose img,
-.prose video {
-  border: 1px solid var(--line);
-}
-.prose figure {
-  margin: 2em 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5rem 0;
 }
 .prose figcaption {
+  margin-top: 0.6rem;
   font-size: var(--t-xs);
   color: var(--text-faint);
-  margin-top: 0.7rem;
-  text-align: center;
 }
-
-/* inline code */
 .prose :not(pre) > code {
   font-family: var(--code);
-  font-size: 0.86em;
-  color: var(--accent);
-  background: var(--accent-deep);
-  border: 1px solid var(--line-hi);
-  padding: 0.1em 0.38em;
-  white-space: nowrap;
+  font-size: 0.9em;
+  background: var(--paper-sunk);
+  padding: 0.12em 0.36em;
 }
-
-/* shiki blocks */
 .prose pre {
-  background: var(--soil) !important;
-  border: 1px solid var(--line-hi);
-  padding: 1.15rem 1.25rem;
+  padding: 1.1rem 1.25rem;
   overflow-x: auto;
-  font-size: var(--t-base);
+  border: 1px solid var(--line);
+  background: var(--paper-dim) !important;
+  font-size: var(--t-xs);
   line-height: 1.6;
-  margin-top: 1.6em;
 }
-.prose pre code {
-  font-family: var(--code);
-  background: none;
-  border: 0;
-  padding: 0;
-  white-space: pre;
-}
-
 .prose table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--t-base);
-  display: block;
-  overflow-x: auto;
+  font-size: var(--t-xs);
 }
 .prose th,
 .prose td {
-  border: 1px solid var(--line);
-  padding: 0.6rem 0.85rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--line);
   text-align: left;
 }
 .prose th {
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  background: var(--surface);
-  font-weight: 500;
-}
-
-/* ============================================================
-   Wiki-links
-   ============================================================ */
-.wikilink {
-  color: var(--accent);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--accent-dim);
-  padding-bottom: 1px;
-}
-.wikilink:hover {
   color: var(--text);
-  border-bottom-color: var(--accent);
-}
-/* referenced but not yet written */
-.wikilink--seed {
-  color: var(--text-faint);
-  font-style: normal;
-  border-bottom: 1px dotted var(--text-faint);
-  cursor: help;
-}
-.wikilink--seed::after {
-  content: '◌';
-  font-size: 0.75em;
-  vertical-align: super;
-  margin-left: 0.15em;
-  color: var(--accent-dim);
-}
-
-/* ============================================================
-   Backlinks
-   ============================================================ */
-.backlinks {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--line);
-}
-.backlinks h2 {
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  margin: 0 0 1.3rem;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-.backlinks h2::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--line);
-}
-.backlink-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-.backlink-list li {
-  background: var(--surface);
-  padding: 1rem 1.2rem;
-  transition: background 0.2s var(--ease);
-}
-.backlink-list li:hover {
-  background: var(--surface-hi);
-}
-.backlink-kind {
-  font-size: var(--t-xs);
-  color: var(--accent-dim);
-  display: block;
-  margin-bottom: 0.3rem;
-}
-.backlink-list a {
-  color: var(--text);
-  font-weight: 500;
-}
-.backlink-list a:hover {
-  color: var(--accent);
-}
-.backlink-list p {
-  margin: 0.3rem 0 0;
-  font-size: var(--t-base);
-  color: var(--text-dim);
-}
-.backlinks-empty {
-  font-size: var(--t-base);
-  color: var(--text-faint);
-  font-style: italic;
-  margin: 0;
-}
-
-/* ============================================================
-   Listings
-   ============================================================ */
-.stream {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.stream li {
-  border-top: 1px solid var(--line);
-}
-.stream li:last-child {
-  border-bottom: 1px solid var(--line);
-}
-.stream-item {
-  display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
-  gap: 2rem;
-  padding: 1.75rem 0;
-  align-items: baseline;
-  position: relative;
-  transition: background 0.2s var(--ease);
-}
-.stream-item:hover {
-  background: var(--surface);
-}
-.stream-when {
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.stream-title {
-  font-family: var(--serif);
-  font-size: var(--t-md);
   font-weight: 600;
-  margin: 0 0 0.4rem;
 }
-.stream-title a {
-  color: var(--text);
+
+/* ============================================================
+   Entry (a single project)
+   ============================================================ */
+.entry-header {
+  padding: clamp(3rem, 7vw, 4.5rem) 0 2rem;
 }
-.stream-title a::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+.entry-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(var(--t-lg), 4.5vw, var(--t-xl));
+  font-weight: 600;
+  letter-spacing: var(--track-display);
+  line-height: 1.15;
+  max-width: 24ch;
+  text-wrap: balance;
 }
-.stream-title a:hover {
-  color: var(--accent);
-}
-.stream-summary {
+.entry-summary {
+  margin: 0;
+  font-size: var(--t-md);
+  line-height: 1.55;
   color: var(--text-dim);
-  font-size: var(--t-base);
-  margin: 0 0 0.8rem;
-  max-width: 68ch;
+  text-wrap: pretty;
 }
-
-@media (max-width: 700px) {
-  .stream-item {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-  }
-  .stream-when {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.9rem;
-  }
-}
-
-/* filter bar */
-.filters {
+.entry-meta {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--line);
-}
-.filter {
-  font-size: var(--t-xs);
-  color: var(--text-dim);
-  background: transparent;
-  border: 1px solid var(--line-hi);
-  padding: 0.35rem 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s var(--ease);
-}
-.filter:hover {
-  color: var(--accent);
-  border-color: var(--accent-dim);
-}
-.filter[aria-pressed='true'] {
-  color: var(--bg);
-  background: var(--accent);
-  border-color: var(--accent);
-}
-.filter-label {
+  gap: 0.9rem;
+  margin-top: 1.25rem;
   font-size: var(--t-xs);
   color: var(--text-faint);
-  margin-right: 0.4rem;
-}
-
-/* ============================================================
-   Links section
-   ============================================================ */
-.link-item {
-  position: relative;
-  padding: 1.6rem 0;
-  border-top: 1px solid var(--line);
-  transition: background 0.2s var(--ease);
-}
-.link-item:last-child {
-  border-bottom: 1px solid var(--line);
-}
-.link-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-.link-title {
-  font-family: var(--serif);
-  font-size: var(--t-md);
-  font-weight: 600;
-  margin: 0;
-}
-.link-title a {
-  color: var(--text);
-}
-.link-title a:hover {
-  color: var(--accent);
-}
-.link-title a::after {
-  content: ' ↗';
-  font-size: 0.8em;
-  color: var(--accent-dim);
-}
-.link-source {
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  white-space: nowrap;
-}
-.link-note {
-  color: var(--text-dim);
-  margin: 0 0 0.8rem;
-  max-width: 70ch;
-  font-size: var(--t-base);
-}
-
-/* ============================================================
-   Achievements
-   ============================================================ */
-.shot {
-  position: relative;
-  background: var(--surface);
-  overflow: hidden;
-}
-.shot-img {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: var(--bg);
-  border-bottom: 1px solid var(--line);
-}
-.shot-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(1) contrast(1.12) brightness(0.82);
-  transition: filter 0.4s var(--ease), transform 0.5s var(--ease);
-}
-.shot:hover .shot-img img {
-  filter: grayscale(0) contrast(1) brightness(1);
-  transform: scale(1.03);
-}
-.shot-body {
-  padding: 1.3rem 1.5rem;
-}
-.shot-body h3 {
-  font-family: var(--serif);
-  font-size: var(--t-base);
-  font-weight: 500;
-  line-height: 1.5;
-  margin: 0;
-  color: var(--text-dim);
-}
-
-/* ============================================================
-   Facts table (about)
-   ============================================================ */
-.facts {
-  border: 1px solid var(--line);
-  background: var(--surface);
-  margin: 0;
-}
-.fact {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 1.1rem;
-  font-size: var(--t-xs);
-  border-bottom: 1px solid var(--line);
-}
-.fact:last-child {
-  border-bottom: 0;
-}
-.fact dt {
-  color: var(--text-faint);
-}
-.fact dd {
-  margin: 0;
-  color: var(--text);
-  text-align: right;
-}
-
-.role {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
-  gap: 2rem;
-  padding: 1.75rem 0;
-  border-top: 1px solid var(--line);
-}
-.role:last-child {
-  border-bottom: 1px solid var(--line);
-}
-.role-when {
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  padding-top: 0.35rem;
-}
-.role-when.is-current {
-  color: var(--accent);
-}
-.role h3 {
-  font-family: var(--serif);
-  font-size: var(--t-md);
-  font-weight: 600;
-  margin: 0 0 0.15rem;
-}
-.role-org {
-  font-size: var(--t-base);
-  color: var(--text-dim);
-  margin: 0 0 0.8rem;
-}
-.role p {
-  color: var(--text-dim);
-  margin: 0;
-  max-width: 68ch;
-}
-@media (max-width: 700px) {
-  .role {
-    grid-template-columns: 1fr;
-    gap: 0.9rem;
-  }
-  .role-when {
-    padding-top: 0;
-  }
-}
-
-/* ============================================================
-   Reveal on scroll
-   ============================================================ */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
-}
-[data-reveal].is-visible {
-  opacity: 1;
-  transform: none;
 }
 
 /* ============================================================
    Empty state
    ============================================================ */
 .empty {
-  border: 1px dashed var(--line-hi);
-  padding: 2.5rem 1.75rem;
-  text-align: center;
+  padding: 3rem 0;
   color: var(--text-faint);
 }
 .empty p {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.4rem;
 }
 .empty code {
   font-family: var(--code);
-  color: var(--accent);
-  font-size: var(--t-base);
-}
-
-/* ============================================================
-   Pagination / prev-next
-   ============================================================ */
-.pager {
-  display: flex;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-top: 3.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--line);
-  font-size: var(--t-xs);
-}
-.pager a {
-  max-width: 45%;
-}
-.pager span {
-  display: block;
-  color: var(--text-faint);
-  font-size: var(--t-xs);
-  margin-bottom: 0.3rem;
+  font-size: 0.9em;
 }
 
 /* ============================================================
    Footer
    ============================================================ */
 .site-footer {
-  padding: 4.5rem 0 2.5rem;
-  background: var(--bg);
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(3rem, 8vw, 5rem);
+  padding: 2rem 0 2.5rem;
   border-top: 1px solid var(--line);
-  margin-top: 4rem;
-}
-.footer-quote {
-  font-family: var(--serif);
-  font-size: clamp(var(--t-lg), 3.2vw, var(--t-xl));
-  line-height: 1.3;
-  letter-spacing: var(--track-tight);
-  font-weight: 500;
-  max-width: 22ch;
-  margin: 0 0 2.5rem;
-}
-.footer-quote em {
-  font-style: normal;
-  color: var(--accent);
-}
-.footer-cols {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 2rem;
-  padding-bottom: 2.5rem;
-}
-.footer-col h3 {
   font-size: var(--t-xs);
   color: var(--text-faint);
-  margin: 0 0 0.9rem;
-  font-weight: 500;
-}
-.footer-col ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.footer-col li + li {
-  margin-top: 0.5rem;
-}
-.footer-col a {
-  color: var(--text-dim);
-  font-size: var(--t-base);
-}
-.footer-col a:hover {
-  color: var(--accent);
 }
 .footer-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--line);
+  gap: 1rem;
 }
-.socials {
+.footer-links {
   display: flex;
-  gap: 0.6rem;
+  flex-wrap: wrap;
+  gap: 1.1rem;
 }
-.socials a {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid var(--line-hi);
+.site-footer a {
   color: var(--text-dim);
-  font-size: var(--t-base);
-  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
-}
-.socials a:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-.colophon {
-  font-size: var(--t-xs);
-  color: var(--text-faint);
-  margin: 0;
-}
-.colophon span {
-  color: var(--accent-dim);
-}
-
-/* ============================================================
-   Authored icons — one stroke weight, no fills.
-   ============================================================ */
-.icon {
-  width: 1em;
-  height: 1em;
-  display: block;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex: none;
-}
-
-/* ============================================================
-   Content lists — one language for every collection of things:
-   a title, a line about it, and a quiet meta line. This replaces the
-   bordered card grid, so projects read the same on the home page and on
-   their own index.
-   ============================================================ */
-.work {
-  display: grid;
-  gap: 2.1rem 3rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-@media (min-width: 860px) {
-  .work--2 {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-.work-item h3 {
-  font-family: var(--serif);
-  font-size: var(--t-md);
-  font-weight: 400;
-  line-height: 1.25;
-  margin: 0 0 0.4rem;
-}
-.work-item h3 a {
-  color: var(--text);
-  transition: color 0.2s var(--ease);
-}
-.work-item h3 a:hover {
-  color: var(--accent);
-}
-.work-item p {
-  margin: 0;
-  max-width: 58ch;
-  font-size: var(--t-base);
-  line-height: 1.6;
-  color: var(--text-dim);
-}
-.work-item .work-meta {
-  margin-top: 0.5rem;
-  font-size: var(--t-xs);
-  color: var(--text-faint);
 }

@@ -1,13 +1,11 @@
 import { defineConfig, envField } from 'astro/config';
-import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 import keystatic from '@keystatic/astro';
-import { remarkWikiLinks } from './src/lib/wikilinks.mjs';
 
 /*
- * The canonical origin, used for canonical <link>s, OG tags and the RSS feed.
+ * The canonical origin, used for canonical <link>s and OG tags.
  *
  * Vercel injects VERCEL_PROJECT_PRODUCTION_URL at build time — on the free tier
  * that's <project>.vercel.app, and it switches to your custom domain by itself
@@ -27,27 +25,38 @@ export default defineConfig({
   site,
   adapter: vercel(),
 
+  /*
+   * The garden's routes are gone, but the links people already made to them
+   * are not. PRODUCT.md treats inbound URLs as a commitment, so every removed
+   * route lands somewhere deliberate instead of on the 404 page.
+   *
+   * /about is the interesting one: that page's content now lives as a section
+   * on the home page, so the anchor takes people to the same words.
+   *
+   * /rss.xml is deliberately absent. A feed reader following a redirect would
+   * be handed HTML and would keep polling it; a 404 tells it to stop.
+   */
+  redirects: {
+    '/about': '/#about',
+    '/now': '/#about',
+    '/notes': '/',
+    '/posts': '/',
+    // Enumerated rather than wildcarded: Astro will not collapse a dynamic
+    // source onto a static destination, and these four are the only note and
+    // post URLs that were ever published, so a catch-all would buy nothing.
+    '/notes/agentforce-and-the-platform-ai-gap': '/',
+    '/notes/how-this-garden-works': '/',
+    '/notes/retrieval-evaluation-is-the-hard-part': '/',
+    '/posts/rebuilding-this-site-as-a-digital-garden': '/',
+  },
+
   // Pages are static by default. Keystatic injects /keystatic and
   // /api/keystatic as on-demand routes; nothing else needs a server.
   integrations: [mdx(), react(), keystatic()],
 
   markdown: {
-    /*
-     * Astro 7 defaults to the `satteri` processor, whose `mdastPlugins` take a
-     * visitor object ({ name, image(node, ctx) }) rather than a unified
-     * transformer — a remark plugin passed there is silently ignored.
-     * `unified()` is the classic remark/rehype pipeline, where the wiki-link
-     * plugin's mdast output and its hName/hProperties are honoured.
-     * gfm and smart punctuation are opt-in here, so they're set explicitly to
-     * match satteri's defaults.
-     */
-    processor: unified({
-      remarkPlugins: [remarkWikiLinks],
-      gfm: true,
-      smartypants: true,
-    }),
     shikiConfig: {
-      theme: 'github-dark-default',
+      theme: 'github-light-default',
       wrap: false,
     },
   },

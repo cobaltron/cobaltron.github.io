@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Entry from '../../layouts/Entry.astro';
-import { getBacklinks } from '../../lib/graph';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -12,29 +11,21 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const backlinks = await getBacklinks('projects', project.id);
 
 const meta = [
-  project.data.role && { label: 'Role', value: project.data.role },
-  project.data.year && { label: 'Year', value: String(project.data.year) },
-].filter(Boolean) as { label: string; value: string }[];
+  project.data.role,
+  project.data.year ? String(project.data.year) : undefined,
+  project.data.stack.length > 0 ? project.data.stack.join(' · ') : undefined,
+].filter(Boolean) as string[];
 ---
 
-<Entry
-  title={project.data.title}
-  summary={project.data.summary}
-  kind="project"
-  tags={project.data.stack}
-  body={project.body}
-  backlinks={backlinks}
-  meta={meta}
->
+<Entry title={project.data.title} summary={project.data.summary} meta={meta}>
   {
     (project.data.repo || project.data.demo) && (
       <p class="project-links">
         {project.data.repo && (
-          <a class="btn btn--ghost" href={project.data.repo} target="_blank" rel="noopener">
-            <i class="fab fa-github" /> Source
+          <a class="btn" href={project.data.repo} target="_blank" rel="noopener">
+            Source
           </a>
         )}
         {project.data.demo && (

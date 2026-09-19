@@ -1,7 +1,6 @@
 ---
 import { getCollection, getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
 
 const page = await getEntry('pages', 'photography');
 const Content = page ? (await render(page)).Content : null;
@@ -14,49 +13,40 @@ const photos = (await getCollection('photos')).sort((a, b) => a.data.order - b.d
   title="Photography"
   description="Photography and videography — a hobby, and a counterweight to work that is mostly abstraction."
 >
-  <Hero compact>
-    <h1>Photography</h1>
-    <p class="hero-lead">
-      The hobby that stuck. Stills and video, shot for no reason other than
-      liking the way light behaves.
-    </p>
-    {
-      handle && (
-        <div class="hero-actions">
-          <a
-            class="btn"
-            href={`https://www.instagram.com/${handle}/`}
-            target="_blank"
-            rel="noopener"
-          >
-            <i class="fab fa-instagram" /> @{handle}
-          </a>
-        </div>
-      )
-    }
-  </Hero>
-
-  {
-    Content && (
-      <section class="section section--tight">
-        <div class="container container--read">
-          <div class="prose">
+  <section class="head">
+    <div class="container">
+      <h1>Photography</h1>
+      <p class="lead">
+        The hobby that stuck. Stills and video, shot for no reason other than
+        liking the way light behaves.
+      </p>
+      {
+        Content && (
+          <div class="prose intro">
             <Content />
           </div>
-        </div>
-      </section>
-    )
-  }
+        )
+      }
+      {
+        handle && (
+          <p class="actions">
+            <a
+              class="btn"
+              href={`https://www.instagram.com/${handle}/`}
+              target="_blank"
+              rel="noopener"
+            >
+              @{handle} on Instagram
+            </a>
+          </p>
+        )
+      }
+    </div>
+  </section>
 
   <section class="section" id="gram">
     <div class="container">
-      <div class="section-head">
-        <h2 class="section-title">From Instagram</h2>
-        <p class="section-sub">
-          Posts load from Instagram when you scroll here — nothing from Meta is
-          requested on any other page.
-        </p>
-      </div>
+      <h2 class="section-title">From Instagram</h2>
 
       {
         photos.length === 0 ? (
@@ -91,26 +81,26 @@ const photos = (await getCollection('photos')).sort((a, b) => a.data.order - b.d
         )
       }
 
-      {
-        handle && (
-          <a
-            class="section-more"
-            href={`https://www.instagram.com/${handle}/`}
-            target="_blank"
-            rel="noopener"
-          >
-            More on Instagram →
-          </a>
-        )
-      }
+      <p class="note">
+        Posts load from Instagram when you scroll here — nothing from Meta is
+        requested on any other page.
+      </p>
     </div>
   </section>
 </Base>
 
 <style>
+  .intro {
+    margin-top: 1.5rem;
+    max-width: var(--read);
+  }
+  .actions {
+    margin: 2rem 0 0;
+  }
+
   .gram-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.75rem;
     align-items: start;
   }
@@ -118,23 +108,21 @@ const photos = (await getCollection('photos')).sort((a, b) => a.data.order - b.d
     margin: 0;
     min-width: 0;
   }
-  /* Instagram injects a light-themed iframe we can't restyle. Sit it on a
-     surface with the site's hairline so it reads as a deliberate frame
-     rather than a stray white rectangle. */
+  /* Instagram injects a light-themed iframe we cannot restyle. On paper that
+     is finally an asset rather than a stray white rectangle — it only needs
+     the site's hairline to read as a deliberate frame. */
   .gram-item :global(.instagram-media) {
     margin: 0 !important;
     min-width: 0 !important;
     max-width: 100% !important;
-    border: 1px solid var(--line-hi) !important;
+    border: 1px solid var(--line) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
   }
   .gram-item figcaption {
-    font-size: var(--t-base);
-    color: var(--text-dim);
-    margin-top: 0.85rem;
-    padding-left: 0.9rem;
-    border-left: 1px solid var(--line-hi);
+    font-size: var(--t-xs);
+    color: var(--text-faint);
+    margin-top: 0.8rem;
   }
   /* Fallback styling for the bare blockquote before/without the script. */
   .gram-item :global(blockquote.instagram-media a) {
@@ -142,8 +130,13 @@ const photos = (await getCollection('photos')).sort((a, b) => a.data.order - b.d
     padding: 2.5rem 1.25rem;
     font-size: var(--t-xs);
     text-align: center;
-    background: var(--surface);
-    color: var(--accent);
+    background: var(--paper-dim);
+  }
+
+  .note {
+    margin: 2.5rem 0 0;
+    font-size: var(--t-xs);
+    color: var(--text-faint);
   }
 </style>
 

@@ -9,7 +9,6 @@ stack:
   - Gemini 2.0 Flash
   - Pixtral
   - Streamlit
-featured: true
 order: 1
 draft: false
 ---
@@ -21,5 +20,5 @@ with Gemini 2.0 Flash driving the reasoning stages. Deployed on Streamlit Cloud.
 ## Why it's staged
 
 Each stage has a narrow contract and can be evaluated on its own, which makes
-failures attributable rather than mysterious — the same argument I make in
-[[Retrieval evaluation is the hard part]].
+failures attributable rather than mysterious. A single end-to-end prompt hides
+which step actually went wrong.

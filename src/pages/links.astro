@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
 import { formatDate, isoDate } from '../lib/format';
 
 const all = await getCollection('links');
@@ -12,38 +11,29 @@ const links = all
   .sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
 
 const pending = all.filter((l) => l.data.draft).length;
-const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
 ---
 
 <Base
   title="Links"
-  description="A curated reading list — things worth your time, with notes on why."
+  description="A reading list — things worth your time, with notes on why."
 >
-  <Hero compact>
-    <h1>Links</h1>
-    <p class="hero-lead">
-      Things I've read that changed how I think about something. The commentary is
-      the point — a bare URL is worth nothing six months later.
-    </p>
-  </Hero>
+  <section class="head">
+    <div class="container">
+      <h1>Links</h1>
+      <p class="lead">
+        Things I've read that changed how I think about something. The
+        commentary is the point — a bare URL is worth nothing six months later.
+      </p>
+    </div>
+  </section>
 
   <section class="section">
     <div class="container">
       {import.meta.env.DEV && pending > 0 && (
-        <p class="pending-note">
+        <p class="pending">
           {pending} draft{pending === 1 ? '' : 's'} awaiting a note — visible only in dev.
           Add commentary in <code>/keystatic</code> and untick Draft to publish.
         </p>
-      )}
-
-      {allTags.length > 0 && (
-        <div class="filters">
-          <span class="filter-label">Topic</span>
-          <button class="filter" data-filter="all" aria-pressed="true">All ({links.length})</button>
-          {allTags.map((tag) => (
-            <button class="filter" data-filter={tag} aria-pressed="false">{tag}</button>
-          ))}
-        </div>
       )}
 
       {links.length === 0 ? (
@@ -52,68 +42,40 @@ const allTags = [...new Set(links.flatMap((l) => l.data.tags))].sort();
           <p>Add links at <code>/keystatic</code> or in <code>src/content/links/</code>.</p>
         </div>
       ) : (
-        <div id="link-list">
+        <ul class="rows">
           {links.map((link) => (
-            <article class="link-item" data-tags={link.data.tags.join(' ')}>
-              <div class="link-head">
-                <h2 class="link-title">
-                  <a href={link.data.url} target="_blank" rel="noopener">{link.data.title}</a>
-                </h2>
-                {link.data.source && <span class="link-source">{link.data.source}</span>}
-              </div>
-              <p class="link-note">{link.data.note}</p>
-              <div class="link-foot">
-                {link.data.tags.length > 0 && (
-                  <ul class="tags">
-                    {link.data.tags.map((tag) => <li>#{tag}</li>)}
-                  </ul>
-                )}
+            <li class="row">
+              <h2>
+                <a href={link.data.url} target="_blank" rel="noopener">
+                  {link.data.title}
+                  <svg class="out" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <path d="M6.5 3.5H12.5V9.5M12.5 3.5L3.5 12.5" />
+                  </svg>
+                  <span class="sr-only">(opens in a new tab)</span>
+                </a>
+              </h2>
+              <p>{link.data.note}</p>
+              <p class="row-meta">
+                {link.data.source && <span>{link.data.source}</span>}
                 <time datetime={isoDate(link.data.added)}>{formatDate(link.data.added)}</time>
-              </div>
-            </article>
+              </p>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   </section>
 </Base>
 
 <style>
-  .pending-note {
+  .pending {
     border: 1px dashed var(--line-hi);
     padding: 0.9rem 1.1rem;
-    margin: 0 0 1.5rem;
+    margin: 0 0 2rem;
     font-size: var(--t-xs);
     color: var(--text-faint);
   }
-  .pending-note code {
-    color: var(--accent);
-  }
-  .link-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .link-foot time {
-    font-size: var(--t-xs);
-    color: var(--text-faint);
+  .pending code {
+    font-family: var(--code);
   }
 </style>
-
-<script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter[data-filter]');
-  const items = document.querySelectorAll<HTMLElement>('#link-list > .link-item');
-
-  buttons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const wanted = button.dataset.filter;
-      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
-      items.forEach((item) => {
-        const tags = (item.dataset.tags ?? '').split(' ');
-        item.hidden = !(wanted === 'all' || tags.includes(wanted!));
-      });
-    });
-  });
-</script>

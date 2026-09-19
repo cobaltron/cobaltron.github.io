@@ -1,549 +1,470 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-07T00:00:00.000Z",
-  "title": "Design System: Rajarshi Lahiri — Digital Garden",
+  "generatedAt": "2026-09-19T13:59:32.457766Z",
+  "title": "Design System: Rajarshi Lahiri",
   "extensions": {
     "colorMeta": {
-      "bg": {
-        "role": "neutral",
-        "displayName": "Garden Ground",
-        "canonical": "#0d1310",
+      "prussian-ink": {
+        "role": "primary",
+        "displayName": "Prussian Ink",
+        "canonical": "#23457a",
         "tonalRamp": [
-          "#050806",
-          "#0a0f0c",
-          "#0d1310",
-          "#141c17",
-          "#1d2921",
-          "#33473a",
-          "#5c7a66",
-          "#a8c2b1"
+          "#11223b",
+          "#1e3b69",
+          "#2b5596",
+          "#386ec3",
+          "#638fd2",
+          "#91afdf",
+          "#bed0ec",
+          "#ebf1f9"
         ]
       },
-      "soil": {
+      "uncoated-cream": {
         "role": "neutral",
-        "displayName": "Soil",
-        "canonical": "#080c0a",
+        "displayName": "Uncoated Cream",
+        "canonical": "#f5f3ed",
         "tonalRamp": [
-          "#040605",
-          "#080c0a",
-          "#0d1310",
-          "#131c17",
-          "#1c2921",
-          "#2f4438",
-          "#587560",
-          "#a2bdac"
+          "#312c1b",
+          "#574d30",
+          "#7c6e45",
+          "#a2905a",
+          "#b7a97e",
+          "#ccc2a4",
+          "#e1dbc9",
+          "#f6f4ef"
         ]
       },
-      "surface": {
+      "cream-dim": {
         "role": "neutral",
-        "displayName": "Bed Surface",
-        "canonical": "#141c17",
+        "displayName": "Cream Dim",
+        "canonical": "#eceade",
         "tonalRamp": [
-          "#080c0a",
-          "#0e1511",
-          "#141c17",
-          "#18211b",
-          "#212e26",
-          "#38503f",
-          "#5f8069",
-          "#aac6b3"
+          "#312e1c",
+          "#565031",
+          "#7b7347",
+          "#a0965c",
+          "#b6ae80",
+          "#cbc6a5",
+          "#e0ddca",
+          "#f6f5ef"
         ]
       },
-      "surface-hi": {
+      "cream-sunk": {
         "role": "neutral",
-        "displayName": "Bed Surface Raised",
-        "canonical": "#18211b",
+        "displayName": "Cream Sunk",
+        "canonical": "#e7e4d9",
         "tonalRamp": [
-          "#0a0e0c",
-          "#111814",
-          "#18211b",
-          "#1f2b23",
-          "#2a3a30",
-          "#3f5a49",
-          "#688b73",
-          "#b0cbb9"
+          "#2f2b1e",
+          "#534c34",
+          "#766d4b",
+          "#9a8e61",
+          "#b1a884",
+          "#c8c1a8",
+          "#dfdbcc",
+          "#f5f4ef"
         ]
       },
-      "text": {
+      "pressed-black": {
         "role": "neutral",
-        "displayName": "Bone",
-        "canonical": "#e6e4d9",
+        "displayName": "Pressed Black",
+        "canonical": "#191814",
         "tonalRamp": [
-          "#26251f",
-          "#3a382f",
-          "#575446",
-          "#75715f",
-          "#948f7a",
-          "#b3ad97",
-          "#cfcabb",
-          "#f2f1ea"
+          "#2a2922",
+          "#4b483c",
+          "#6b6756",
+          "#8c8670",
+          "#a6a290",
+          "#c0bdb0",
+          "#dad8d0",
+          "#f4f3f1"
         ]
       },
       "text-dim": {
         "role": "neutral",
-        "displayName": "Sage Dim",
-        "canonical": "#99a597",
+        "displayName": "Text Dim",
+        "canonical": "#56534a",
         "tonalRamp": [
-          "#191d18",
-          "#2a3129",
-          "#3f4a3d",
-          "#556353",
-          "#6c7d69",
-          "#99a597",
-          "#bcc5ba",
-          "#e0e5de"
+          "#292823",
+          "#48463e",
+          "#686459",
+          "#878274",
+          "#a29f93",
+          "#bdbbb3",
+          "#d8d7d2",
+          "#f3f3f1"
         ]
       },
       "text-faint": {
         "role": "neutral",
-        "displayName": "Sage Faint",
-        "canonical": "#7f8e7f",
+        "displayName": "Text Faint",
+        "canonical": "#6f6b60",
         "tonalRamp": [
-          "#151815",
-          "#242923",
-          "#373f36",
-          "#4c574a",
-          "#63715f",
-          "#7f8e7f",
-          "#a9b6a8",
-          "#d7ded6"
+          "#292823",
+          "#48463f",
+          "#68645a",
+          "#878275",
+          "#a29e94",
+          "#bdbab3",
+          "#d8d7d2",
+          "#f3f3f1"
         ]
       },
-      "line": {
+      "hairline": {
         "role": "neutral",
         "displayName": "Hairline",
-        "canonical": "#202a23",
+        "canonical": "#dcd8cc",
         "tonalRamp": [
-          "#090c0a",
-          "#131a15",
-          "#202a23",
-          "#2f3d33",
-          "#425444",
-          "#5d735f",
-          "#8ba48d",
-          "#c6d5c8"
+          "#2d2a1f",
+          "#504a37",
+          "#726a4f",
+          "#958966",
+          "#ada488",
+          "#c5bfab",
+          "#ddd9cd",
+          "#f5f3f0"
         ]
       },
-      "line-hi": {
+      "hairline-hi": {
         "role": "neutral",
-        "displayName": "Hairline Raised",
-        "canonical": "#2f3d33",
+        "displayName": "Hairline Hi",
+        "canonical": "#c4bfb1",
         "tonalRamp": [
-          "#0c100d",
-          "#1a221c",
-          "#2f3d33",
-          "#3d4f42",
-          "#4f6553",
-          "#6b8470",
-          "#96af9b",
-          "#cfdcd2"
+          "#2c2921",
+          "#4d483a",
+          "#6e6753",
+          "#8f866c",
+          "#a9a18d",
+          "#c2bdae",
+          "#dbd8cf",
+          "#f4f3f0"
         ]
       },
-      "accent": {
-        "role": "primary",
-        "displayName": "Leaf Green",
-        "canonical": "#9ecb8f",
+      "selection": {
+        "role": "neutral",
+        "displayName": "Selection",
+        "canonical": "#dbe3f0",
         "tonalRamp": [
-          "#16241a",
-          "#22381f",
-          "#33512c",
-          "#456b3b",
-          "#5f8f52",
-          "#7fae70",
-          "#9ecb8f",
-          "#cfe6c5"
-        ]
-      },
-      "accent-dim": {
-        "role": "primary",
-        "displayName": "Moss Underline",
-        "canonical": "#3f5c40",
-        "tonalRamp": [
-          "#0f170f",
-          "#1b271b",
-          "#2a3d2a",
-          "#3f5c40",
-          "#547a55",
-          "#719972",
-          "#9bbb9c",
-          "#cddece"
-        ]
-      },
-      "accent-deep": {
-        "role": "primary",
-        "displayName": "Ink Wash",
-        "canonical": "#16241a",
-        "tonalRamp": [
-          "#080d09",
-          "#0f1810",
-          "#16241a",
-          "#213724",
-          "#2f4c33",
-          "#456b4a",
-          "#6f9575",
-          "#a9c7ae"
-        ]
-      },
-      "signal": {
-        "role": "secondary",
-        "displayName": "Signal Ochre",
-        "canonical": "#d9a441",
-        "tonalRamp": [
-          "#2c1f06",
-          "#46310c",
-          "#654716",
-          "#875f21",
-          "#a9782d",
-          "#c68f38",
-          "#d9a441",
-          "#f0d296"
-        ]
-      },
-      "stem-seedling": {
-        "role": "tertiary",
-        "displayName": "Seedling Stem",
-        "canonical": "#647563",
-        "tonalRamp": [
-          "#11150f",
-          "#1d2419",
-          "#2d3829",
-          "#3f4d3a",
-          "#52634c",
-          "#647563",
-          "#96a695",
-          "#cdd6cc"
-        ]
-      },
-      "stem-budding": {
-        "role": "tertiary",
-        "displayName": "Budding Stem",
-        "canonical": "#7ca173",
-        "tonalRamp": [
-          "#131a10",
-          "#20301c",
-          "#31462a",
-          "#445e3a",
-          "#587a4d",
-          "#7ca173",
-          "#a6c39f",
-          "#d5e4d0"
-        ]
-      },
-      "stem-evergreen": {
-        "role": "tertiary",
-        "displayName": "Evergreen Stem",
-        "canonical": "#c2d9a4",
-        "tonalRamp": [
-          "#1d2515",
-          "#2f3d22",
-          "#455733",
-          "#5d7546",
-          "#78935c",
-          "#9bb77c",
-          "#c2d9a4",
-          "#e4eed4"
+          "#162236",
+          "#283d5f",
+          "#395788",
+          "#4a71b1",
+          "#7291c4",
+          "#9bb1d5",
+          "#c4d1e6",
+          "#edf1f8"
         ]
       },
       "ink-0": {
-        "role": "tertiary",
-        "displayName": "Ink 0 — Deepest",
-        "canonical": "#070b09",
+        "role": "primary",
+        "displayName": "Plate Black",
+        "canonical": "#101a28",
         "tonalRamp": [
-          "#070b09",
-          "#1e2f22",
-          "#41613f",
-          "#84a877",
-          "#dfe3cf"
+          "#162437",
+          "#273f60",
+          "#375a8a",
+          "#4875b4",
+          "#7094c6",
+          "#9ab3d6",
+          "#c3d2e7",
+          "#edf1f8"
         ]
       },
       "ink-1": {
-        "role": "tertiary",
-        "displayName": "Ink 1",
-        "canonical": "#1e2f22",
+        "role": "primary",
+        "displayName": "Deep Plate",
+        "canonical": "#2b4463",
         "tonalRamp": [
-          "#070b09",
-          "#1e2f22",
-          "#41613f",
-          "#84a877",
-          "#dfe3cf"
+          "#172535",
+          "#29415e",
+          "#3a5c87",
+          "#4c78af",
+          "#7397c2",
+          "#9cb5d4",
+          "#c5d3e6",
+          "#edf2f7"
         ]
       },
       "ink-2": {
-        "role": "tertiary",
-        "displayName": "Ink 2 — Mid",
-        "canonical": "#41613f",
+        "role": "primary",
+        "displayName": "Mid Plate",
+        "canonical": "#6480a4",
         "tonalRamp": [
-          "#070b09",
-          "#1e2f22",
-          "#41613f",
-          "#84a877",
-          "#dfe3cf"
+          "#1c2530",
+          "#324155",
+          "#475d7a",
+          "#5d7a9e",
+          "#8198b5",
+          "#a5b6ca",
+          "#cad4e0",
+          "#eff2f6"
         ]
       },
       "ink-3": {
-        "role": "tertiary",
-        "displayName": "Ink 3",
-        "canonical": "#84a877",
+        "role": "primary",
+        "displayName": "Pale Plate",
+        "canonical": "#b8c6da",
         "tonalRamp": [
-          "#070b09",
-          "#1e2f22",
-          "#41613f",
-          "#84a877",
-          "#dfe3cf"
+          "#1a2432",
+          "#2e4059",
+          "#425b7f",
+          "#5677a5",
+          "#7b95ba",
+          "#a2b4ce",
+          "#c8d3e2",
+          "#eef2f6"
         ]
       },
       "ink-4": {
-        "role": "tertiary",
-        "displayName": "Ink 4 — Highlight",
-        "canonical": "#dfe3cf",
+        "role": "primary",
+        "displayName": "Plate Paper",
+        "canonical": "#f5f3ed",
         "tonalRamp": [
-          "#070b09",
-          "#1e2f22",
-          "#41613f",
-          "#84a877",
-          "#dfe3cf"
+          "#312c1b",
+          "#574d30",
+          "#7c6e45",
+          "#a2905a",
+          "#b7a97e",
+          "#ccc2a4",
+          "#e1dbc9",
+          "#f6f4ef"
+        ]
+      },
+      "field-ink": {
+        "role": "primary",
+        "displayName": "Field Ink",
+        "canonical": "#cdd7e6",
+        "tonalRamp": [
+          "#1a2433",
+          "#2d3f5a",
+          "#405a81",
+          "#5475a8",
+          "#7994bc",
+          "#a0b3d0",
+          "#c7d2e3",
+          "#eef1f6"
+        ]
+      },
+      "highlighter": {
+        "role": "secondary",
+        "displayName": "Highlighter",
+        "canonical": "#e8b93c",
+        "tonalRamp": [
+          "#3d2f08",
+          "#6b520e",
+          "#997515",
+          "#c7981b",
+          "#e8b93c",
+          "#eeca6c",
+          "#f4dc9d",
+          "#faedce"
         ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "The name in the soil band and page h1s. Literata at opsz 72."
+        "purpose": "Page titles. One per page, in .head."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Band headings and section titles."
+        "purpose": "The title of a single project entry."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "List item titles, entry links, role headings."
+        "purpose": "Row titles in a list, and .lead intro copy."
       },
       "body": {
-        "displayName": "Reading",
-        "purpose": "Long-form prose, capped at 68ch, Literata at opsz 14."
-      },
-      "ui": {
-        "displayName": "Interface",
-        "purpose": "Summaries, list descriptions, buttons, footer links. Archivo."
+        "displayName": "Body",
+        "purpose": "Prose, capped at 66ch."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Meta rows, tags, filters, nav links, axis ticks, captions. Sentence case, never tracked out."
+        "purpose": "Section headings and kit terms. The only uppercase and the only positive tracking in the system."
       },
-      "code": {
-        "displayName": "Code",
-        "purpose": "Inline code and shiki blocks only. Three sites in the whole build; never a voice."
+      "fallback": {
+        "displayName": "Archivo Fallback",
+        "purpose": "Metric-matched alias for local Arial/Helvetica/Liberation Sans. Archivo is 10.7% wider on average, so size-adjust: 110.69% stops the swap reflowing the page."
       }
     },
-    "shadows": [
-      {
-        "name": "none",
-        "value": "none",
-        "purpose": "The build declares no box-shadow at all beyond one box-shadow: none reset on a third-party embed. Depth is tonal: soil inset into ground, surface above it, surface-hi on hover."
-      }
-    ],
+    "shadows": [],
     "motion": [
       {
-        "name": "ease",
+        "name": "ease-standard",
         "value": "cubic-bezier(0.4, 0, 0.2, 1)",
-        "purpose": "The single easing curve for every colour, border and background transition (0.18s–0.3s)."
+        "purpose": "The only easing token. State transitions on links, buttons and nav at 0.18s."
       },
       {
-        "name": "dither-fade",
-        "value": "opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
-        "purpose": "Cross-fade from the source photograph to the painted dither canvas."
+        "name": "develop",
+        "value": "1 - (1 - t)^3 over 1250ms",
+        "purpose": "The portrait's dot coverage ramping from a blank plate to the full image on arrival. Cubic, not exponential: an exponential curve put half the image down in the first 110ms and popped rather than developed."
       },
       {
-        "name": "reveal",
-        "value": "opacity 0.6s / translateY(14px) 0.6s",
-        "purpose": "IntersectionObserver reveal on [data-reveal]; skipped under reduced motion."
+        "name": "field-drift",
+        "value": "15fps (10fps above 300k dots)",
+        "purpose": "The page field's own clock. Three separable sine waves; rAF halts it on a hidden tab."
+      },
+      {
+        "name": "lamp-follow",
+        "value": "lerp 0.2 per frame, ~170px radius",
+        "purpose": "The pointer lamp easing in and out. Repaints via putImageData dirty rects at display rate, independent of the field's clock."
       }
     ],
     "breakpoints": [
       {
-        "name": "grid-3-to-2",
-        "value": "940px"
-      },
-      {
-        "name": "hero-stack",
-        "value": "860px"
-      },
-      {
-        "name": "nav-collapse",
-        "value": "780px"
-      },
-      {
-        "name": "columns-stack",
-        "value": "700px"
-      },
-      {
-        "name": "single-column",
-        "value": "640px"
+        "name": "wide",
+        "value": "46rem"
       }
     ]
   },
   "components": [
     {
-      "name": "Hero Band",
+      "name": "Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "The only button in the system. Square, unfilled, hairline-bordered; hover moves border and label together to Prussian Ink.",
+      "html": "<a class=\"ds-btn\" href=\"#\"><svg class=\"ds-ico\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M8 2.5v7.5M4.75 6.75 8 10l3.25-3.25M3 13h10\"/></svg>Download CV</a>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.55rem 1.1rem; border:1px solid var(--text-faint,#6f6b60); background:transparent; color:var(--text,#191814); font-family:Archivo, 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size:1rem; text-decoration:none; border-radius:0; cursor:pointer; transition:border-color .18s cubic-bezier(.4,0,.2,1), color .18s cubic-bezier(.4,0,.2,1); } .ds-btn:hover { border-color:var(--accent,#23457a); color:var(--accent,#23457a); } .ds-btn:focus-visible { outline:2px solid var(--accent,#23457a); outline-offset:3px; } .ds-ico { width:1em; height:1em; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }"
+    },
+    {
+      "name": "Link",
       "kind": "custom",
-      "refersTo": "portrait",
-      "description": "The shared hero grid used unchanged by the home page and About: text column sized to its own measure, portrait beside it, collapsing to one column with the portrait first at 860px.",
-      "html": "<section class=\"ds-hero\"><div class=\"ds-hero-grid\"><div><h1>Rajarshi Lahiri</h1><p class=\"ds-hero-lead\">I build Salesforce and applied-AI systems, and I write here while I am still working things out.</p><p class=\"ds-routes\"><a href=\"#\">Read the notes</a><a href=\"#\">See the work</a></p></div><div class=\"ds-hero-portrait\"><img src=\"/img/photo.jpg\" alt=\"Rajarshi Lahiri\" width=\"240\" height=\"240\" /></div></div></section>",
-      "css": ".ds-hero-grid { display: grid; grid-template-columns: minmax(0, 56ch) auto; justify-content: start; gap: clamp(1.75rem, 7vw, 5.5rem); align-items: start; } .ds-hero h1 { font-family: var(--serif, 'Literata', Georgia, serif); font-size: clamp(2.441rem, 6.5vw, 3.052rem); font-weight: 500; line-height: 1; letter-spacing: -0.02em; font-variation-settings: 'opsz' 72; color: #e6e4d9; margin: 0 0 1rem; } .ds-hero-lead { font-family: var(--serif, 'Literata', Georgia, serif); font-size: 1.125rem; line-height: 1.72; font-variation-settings: 'opsz' 14; color: #99a597; max-width: 54ch; margin: 0 0 2rem; } .ds-routes { display: flex; flex-wrap: wrap; gap: 1.75rem; margin: 0; } .ds-routes a { color: #e6e4d9; font-size: 1rem; font-family: var(--sans, 'Archivo', system-ui, sans-serif); text-decoration: none; padding-bottom: 3px; border-bottom: 2px solid #3f5c40; transition: color 0.18s cubic-bezier(0.4,0,0.2,1), border-color 0.18s cubic-bezier(0.4,0,0.2,1); } .ds-routes a:hover { color: #9ecb8f; border-bottom-color: #9ecb8f; } .ds-routes a:focus-visible { outline: 2px solid #d9a441; outline-offset: 4px; } .ds-hero-portrait { position: relative; width: clamp(170px, 22vw, 240px); aspect-ratio: 1; border: 1px solid #2f3d33; border-radius: 8px; background: #080c0a; overflow: hidden; } .ds-hero-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; } @media (max-width: 860px) { .ds-hero-grid { grid-template-columns: 1fr; gap: 2.25rem; } .ds-hero-portrait { order: -1; } }"
-    },
-    {
-      "name": "Primary Button",
-      "kind": "button",
-      "refersTo": "button-primary",
-      "description": "Square leaf-green button; hover inverts to an outline.",
-      "html": "<button class=\"ds-btn\">Read the notes</button>",
-      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--sans, 'Archivo', system-ui, sans-serif); font-size: 1rem; font-weight: 500; padding: 0.62rem 1.1rem; color: #0d1310; background: #9ecb8f; border: 1px solid #9ecb8f; border-radius: 0; cursor: pointer; transition: background 0.2s cubic-bezier(0.4,0,0.2,1), color 0.2s cubic-bezier(0.4,0,0.2,1); } .ds-btn:hover { background: transparent; color: #9ecb8f; } .ds-btn:focus-visible { outline: 2px solid #d9a441; outline-offset: 3px; }"
-    },
-    {
-      "name": "Ghost Button",
-      "kind": "button",
-      "refersTo": "button-ghost",
-      "description": "Hairline-bordered secondary action.",
-      "html": "<button class=\"ds-btn-ghost\">See the work</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--sans, 'Archivo', system-ui, sans-serif); font-size: 1rem; font-weight: 500; padding: 0.62rem 1.1rem; color: #e6e4d9; background: transparent; border: 1px solid #2f3d33; border-radius: 0; cursor: pointer; transition: color 0.2s cubic-bezier(0.4,0,0.2,1), border-color 0.2s cubic-bezier(0.4,0,0.2,1); } .ds-btn-ghost:hover { color: #9ecb8f; border-color: #9ecb8f; } .ds-btn-ghost:focus-visible { outline: 2px solid #d9a441; outline-offset: 3px; }"
-    },
-    {
-      "name": "Filter Chip",
-      "kind": "chip",
-      "refersTo": "filter",
-      "description": "Toggle for listing pages; pressed state inverts to a solid accent fill.",
-      "html": "<div style=\"display:flex;gap:0.5rem;align-items:center\"><button class=\"ds-filter\" aria-pressed=\"true\">All</button><button class=\"ds-filter\" aria-pressed=\"false\">Evergreen</button><span class=\"ds-tag\">#salesforce</span></div>",
-      "css": ".ds-filter { font-family: var(--sans, 'Archivo', system-ui, sans-serif); font-size: 0.8rem; color: #99a597; background: transparent; border: 1px solid #2f3d33; border-radius: 0; padding: 0.35rem 0.75rem; cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1); } .ds-filter:hover { color: #9ecb8f; border-color: #3f5c40; } .ds-filter[aria-pressed=\"true\"] { color: #0d1310; background: #9ecb8f; border-color: #9ecb8f; } .ds-filter:focus-visible { outline: 2px solid #d9a441; outline-offset: 3px; } .ds-tag { font-family: var(--sans, 'Archivo', system-ui, sans-serif); font-size: 0.8rem; color: #99a597; border: 1px solid #2f3d33; padding: 0.2rem 0.55rem; white-space: nowrap; }"
+      "refersTo": "link",
+      "description": "One link treatment sitewide: the underline is always present at rest, so colour never carries the affordance alone.",
+      "html": "<p class=\"ds-copy\">Read the <a class=\"ds-link\" href=\"#\">project write-up</a>, or the <a class=\"ds-link\" href=\"#\">reading list<svg class=\"ds-out\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M6.5 3.5H12.5V9.5M12.5 3.5L3.5 12.5\"/></svg></a>.</p>",
+      "css": ".ds-copy { font-family:Archivo, 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size:1rem; line-height:1.7; color:var(--text-dim,#56534a); margin:0; } .ds-link { color:var(--text,#191814); text-decoration:underline; text-decoration-color:var(--text-faint,#6f6b60); text-decoration-thickness:1px; text-underline-offset:3px; transition:color .18s cubic-bezier(.4,0,.2,1), text-decoration-color .18s cubic-bezier(.4,0,.2,1); } .ds-link:hover { color:var(--accent,#23457a); text-decoration-color:var(--accent,#23457a); } .ds-link:focus-visible { outline:2px solid var(--accent,#23457a); outline-offset:3px; } .ds-out { display:inline-block; width:.62em; height:.62em; margin-left:.4em; fill:none; stroke:currentColor; stroke-width:1.5; color:var(--text-faint,#6f6b60); } .ds-link:hover .ds-out { color:var(--accent,#23457a); }"
     },
     {
       "name": "Navigation",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "Sticky translucent header: brand mark of three ascending stems, label-sized links, accent underline on the current page.",
-      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-brand\" href=\"/\"><svg class=\"ds-nav-mark\" viewBox=\"0 0 22 22\" aria-hidden=\"true\"><path d=\"M5 17.5V13M11 17.5V8M17 17.5V3.5\"/></svg><span>rajarshi lahiri<span class=\"ds-dot\">.</span></span></a><div class=\"ds-nav-links\"><a class=\"ds-nav-link\" href=\"/notes\" aria-current=\"page\">Notes</a><a class=\"ds-nav-link\" href=\"/posts\">Posts</a><a class=\"ds-nav-link\" href=\"/projects\">Projects</a></div></nav>",
-      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.05rem 1.5rem; background: rgba(13,19,16,0.82); backdrop-filter: blur(14px); border-bottom: 1px solid #202a23; font-family: var(--sans, 'Archivo', system-ui, sans-serif); } .ds-nav-brand { display: inline-flex; align-items: center; gap: 0.65rem; font-size: 1rem; font-weight: 500; color: #e6e4d9; text-decoration: none; } .ds-nav-mark { width: 22px; height: 22px; fill: none; stroke: #9ecb8f; stroke-width: 1.5; stroke-linecap: round; } .ds-dot { color: #9ecb8f; } .ds-nav-links { display: flex; align-items: center; gap: 1.6rem; } .ds-nav-link { position: relative; font-size: 0.8rem; color: #99a597; text-decoration: none; transition: color 0.2s cubic-bezier(0.4,0,0.2,1); } .ds-nav-link:hover, .ds-nav-link[aria-current=\"page\"] { color: #9ecb8f; } .ds-nav-link[aria-current=\"page\"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -0.45rem; height: 1px; background: #9ecb8f; } .ds-nav-link:focus-visible { outline: 2px solid #d9a441; outline-offset: 3px; }"
+      "description": "Wordmark plus three links. No menu and no hamburger; at phone width the row wraps. The current page is marked by weight of colour plus a 1px rule, never by colour alone.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-brand\" href=\"#\">rajarshi lahiri</a><span class=\"ds-navlinks\"><a class=\"ds-navlink\" href=\"#\" aria-current=\"page\">Projects</a><a class=\"ds-navlink\" href=\"#\">Photography</a><a class=\"ds-navlink\" href=\"#\">Links</a></span></nav>",
+      "css": ".ds-nav { display:flex; align-items:baseline; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; padding:1.15rem 0; font-family:Archivo, 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; border-bottom:1px solid var(--line,#dcd8cc); } .ds-brand { font-weight:600; letter-spacing:-0.02em; text-decoration:none; color:var(--text,#191814); } .ds-brand:hover { color:var(--accent,#23457a); } .ds-navlinks { display:flex; gap:1.5rem; } .ds-navlink { font-size:1rem; color:var(--text-dim,#56534a); text-decoration:none; padding-bottom:2px; border-bottom:1px solid transparent; } .ds-navlink:hover { color:var(--accent,#23457a); } .ds-navlink[aria-current=page] { color:var(--text,#191814); border-bottom-color:var(--text,#191814); }"
     },
     {
-      "name": "Content List Item",
-      "kind": "card",
-      "refersTo": "work-item",
-      "description": "The shared language for any collection of things: serif title, one dimmed sentence, quiet meta line. Replaced the bordered card grid.",
-      "html": "<ul class=\"ds-work\"><li class=\"ds-work-item\"><h3><a href=\"#\">Agentforce evaluation harness</a></h3><p>A harness that scores agent runs against fixed transcripts, so a prompt change is measured rather than argued about.</p><p class=\"ds-work-meta\">Apex, Python, Data Cloud</p></li></ul>",
-      "css": ".ds-work { display: grid; gap: 2.1rem 3rem; margin: 0; padding: 0; list-style: none; } .ds-work-item h3 { font-family: var(--serif, 'Literata', Georgia, serif); font-size: 1.25rem; font-weight: 400; line-height: 1.25; margin: 0 0 0.4rem; font-variation-settings: 'opsz' 40; } .ds-work-item h3 a { color: #e6e4d9; text-decoration: none; transition: color 0.2s cubic-bezier(0.4,0,0.2,1); } .ds-work-item h3 a:hover { color: #9ecb8f; } .ds-work-item h3 a:focus-visible { outline: 2px solid #d9a441; outline-offset: 3px; } .ds-work-item p { margin: 0; max-width: 58ch; font-family: var(--sans, 'Archivo', system-ui, sans-serif); font-size: 1rem; line-height: 1.6; color: #99a597; } .ds-work-item .ds-work-meta { margin-top: 0.5rem; font-size: 0.8rem; color: #7f8e7f; }"
-    },
-    {
-      "name": "Growth Stage Meter",
+      "name": "Row",
       "kind": "custom",
-      "refersTo": "stage-note",
-      "description": "Three-step density meter encoding how tended a note is; lit steps read by fill, never by pattern.",
-      "html": "<span class=\"ds-stage\" data-stage=\"budding\"><span class=\"ds-stage-dots\" aria-hidden=\"true\"><span class=\"ds-stage-dot is-lit\"></span><span class=\"ds-stage-dot is-lit\"></span><span class=\"ds-stage-dot\"></span></span><span>Budding</span></span>",
-      "css": ".ds-stage { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--sans, 'Archivo', system-ui, sans-serif); font-size: 0.8rem; color: #99a597; white-space: nowrap; } .ds-stage[data-stage=\"evergreen\"] { color: #9ecb8f; } .ds-stage-dots { display: inline-flex; gap: 2px; } .ds-stage-dot { width: 9px; height: 9px; border: 1px solid #202a23; background: transparent; } .ds-stage-dot.is-lit { border-color: #7ca173; background: #7ca173; }"
+      "refersTo": "link",
+      "description": "The single list primitive, shared by projects and links so the two read as the same kind of object. No border, no background, no bullet: spacing is the separator.",
+      "html": "<ul class=\"ds-rows\"><li class=\"ds-row\"><h3><a class=\"ds-link\" href=\"#\">Medical document intake pipeline</a></h3><p>A five-stage sequential pipeline that takes messy clinical documents and produces FHIR-compatible structured output.</p><p class=\"ds-meta\"><span>2025</span><span>Python &middot; Agno &middot; FastAPI</span></p></li><li class=\"ds-row\"><h3><a class=\"ds-link\" href=\"#\">Text-to-SQL RAG application</a></h3><p>Natural-language querying over a relational schema, with an evaluation harness for the retrieval step.</p><p class=\"ds-meta\"><span>2025</span><span>ChromaDB &middot; Streamlit</span></p></li></ul>",
+      "css": ".ds-rows { display:grid; gap:2.1rem; margin:0; padding:0; list-style:none; font-family:Archivo, 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-row h3 { margin:0 0 .4rem; font-size:1.25rem; font-weight:500; line-height:1.3; letter-spacing:-0.02em; } .ds-row p { margin:0; max-width:62ch; font-size:1rem; line-height:1.6; color:var(--text-dim,#56534a); } .ds-meta { display:flex; flex-wrap:wrap; gap:.9rem; margin:.55rem 0 0 !important; font-size:.8rem; color:var(--text-faint,#6f6b60) !important; } .ds-link { color:var(--text,#191814); text-decoration:underline; text-decoration-color:var(--text-faint,#6f6b60); text-decoration-thickness:1px; text-underline-offset:3px; } .ds-link:hover { color:var(--accent,#23457a); text-decoration-color:var(--accent,#23457a); }"
     },
     {
-      "name": "Index Row",
+      "name": "Section Title",
       "kind": "custom",
-      "refersTo": "work-item",
-      "description": "Home-page index row: a 3px full-height left rail carrying the stage ramp, then title, summary and a .row-meta line. Finished posts get a cut stub instead of a full rail.",
-      "html": "<ol class=\"ds-index\"><li class=\"ds-entry\"><span class=\"ds-entry-stem\" data-stage=\"evergreen\" aria-hidden=\"true\"></span><div><h3><a href=\"#\">Sharing and visibility, from first principles</a></h3><p>What the model actually computes, and why the org-wide default is the only knob that matters first.</p><p class=\"ds-row-meta\">Evergreen, tended 14 August 2026</p></div></li></ol>",
-      "css": ".ds-index { display: grid; gap: 2.1rem; margin: 0; padding: 0; list-style: none; } .ds-entry { display: grid; grid-template-columns: 3px 1fr; gap: 1.4rem; } .ds-entry-stem { border-radius: 2px; background: #647563; } .ds-entry-stem[data-stage=\"budding\"] { background: #7ca173; } .ds-entry-stem[data-stage=\"evergreen\"] { background: #c2d9a4; } .ds-entry h3 { font-family: var(--serif, 'Literata', Georgia, serif); margin: 0 0 0.45rem; font-size: 1.25rem; font-weight: 400; font-variation-settings: 'opsz' 40; line-height: 1.25; } .ds-entry h3 a { color: #e6e4d9; text-decoration: none; transition: color 0.18s cubic-bezier(0.4,0,0.2,1); } .ds-entry h3 a:hover { color: #9ecb8f; } .ds-entry p { margin: 0; max-width: 62ch; font-family: var(--sans, 'Archivo', system-ui, sans-serif); font-size: 1rem; line-height: 1.6; color: #99a597; } .ds-entry .ds-row-meta { margin-top: 0.55rem; font-size: 0.8rem; color: #7f8e7f; }"
+      "refersTo": "section-title",
+      "description": "The only uppercase and the only positive tracking in the system. It is a section heading, not a kicker: content follows it, never another heading.",
+      "html": "<div class=\"ds-sec\"><h2 class=\"ds-sectitle\">Recently read</h2><p class=\"ds-secbody\">Things I have read that changed how I think about something.</p></div>",
+      "css": ".ds-sec { font-family:Archivo, 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; border-top:1px solid var(--line,#dcd8cc); padding-top:2.5rem; } .ds-sectitle { margin:0 0 1.75rem; font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.12em; color:var(--text-faint,#6f6b60); } .ds-secbody { margin:0; font-size:1rem; line-height:1.7; color:var(--text-dim,#56534a); }"
     },
     {
-      "name": "Wiki-link",
+      "name": "Kit List",
       "kind": "custom",
-      "refersTo": "nav-link",
-      "description": "Resolved links get a dashed moss underline; links to unwritten notes drop to faint with a dotted rule and a superscript seed glyph.",
-      "html": "<p class=\"ds-wl-demo\">See <a class=\"ds-wikilink\" href=\"#\">record locking</a>, and eventually <a class=\"ds-wikilink ds-wikilink--seed\" href=\"#\">skew in large accounts</a>.</p>",
-      "css": ".ds-wl-demo { font-family: var(--serif, 'Literata', Georgia, serif); font-size: 1.125rem; line-height: 1.72; color: #e6e4d9; } .ds-wikilink { color: #9ecb8f; text-decoration: none; border-bottom: 1px dashed #3f5c40; padding-bottom: 1px; } .ds-wikilink:hover { color: #e6e4d9; border-bottom-color: #9ecb8f; } .ds-wikilink--seed { color: #7f8e7f; border-bottom: 1px dotted #7f8e7f; cursor: help; } .ds-wikilink--seed::after { content: '◌'; font-size: 0.75em; vertical-align: super; margin-left: 0.15em; color: #3f5c40; }"
+      "refersTo": "section-title",
+      "description": "Reference, not reading: set tighter and quieter than prose so the eye can skip it and scan by its terms. Used for the stack list beside the About copy.",
+      "html": "<dl class=\"ds-kit\"><div><dt>Salesforce</dt><dd>Sales, Service, Financial Services and Experience Cloud. Apex, LWC, Agentforce.</dd></div><div><dt>Applied AI</dt><dd>Python, Agno, FastAPI, ChromaDB. RAG systems, agentic workflows.</dd></div></dl>",
+      "css": ".ds-kit { margin:0; display:grid; gap:1.4rem; font-family:Archivo, 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size:.8rem; } .ds-kit dt { font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint,#6f6b60); margin-bottom:.35rem; } .ds-kit dd { margin:0; line-height:1.6; color:var(--text-dim,#56534a); }"
     },
     {
-      "name": "Dithered Portrait Frame",
+      "name": "Empty State",
       "kind": "custom",
-      "refersTo": "portrait",
-      "description": "The one place the material appears. Canvas backing store is sized in dots (cssPx / --dither-cell), so one dot is 3 CSS pixels on every screen regardless of DPR.",
-      "html": "<div class=\"ds-portrait\"><span class=\"ds-dither\"><img src=\"/img/photo.jpg\" alt=\"Rajarshi Lahiri\" width=\"240\" height=\"240\" data-dither /></span></div>",
-      "css": ".ds-portrait { position: relative; width: clamp(170px, 22vw, 240px); aspect-ratio: 1; border: 1px solid #2f3d33; border-radius: 8px; background: #080c0a; overflow: hidden; } .ds-portrait::after { content: ''; position: absolute; inset: 0; border: 1px solid rgba(194,217,164,0.16); border-radius: inherit; pointer-events: none; z-index: 1; } .ds-dither { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; } .ds-dither > img, .ds-dither > canvas { width: 100%; height: 100%; display: block; object-fit: cover; } .ds-dither > canvas { position: absolute; inset: 0; image-rendering: pixelated; opacity: 0; transition: opacity 0.45s cubic-bezier(0.4,0,0.2,1); } .ds-dither.is-ready > canvas { opacity: 1; } .ds-dither.is-ready > img { opacity: 0; }"
+      "refersTo": "section-title",
+      "description": "Names where the content is authored rather than apologising. Quiet by construction — it is Text Faint on plain paper with no panel around it.",
+      "html": "<div class=\"ds-empty\"><p>Nothing collected yet.</p><p>Add links at <code>/keystatic</code> or in <code>src/content/links/</code>.</p></div>",
+      "css": ".ds-empty { font-family:Archivo, 'Archivo Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding:3rem 0; color:var(--text-faint,#6f6b60); } .ds-empty p { margin:0 0 .4rem; font-size:1rem; } .ds-empty code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.9em; background:var(--paper-sunk,#e7e4d9); padding:.12em .36em; }"
+    },
+    {
+      "name": "Highlighter",
+      "kind": "custom",
+      "refersTo": "link",
+      "description": "Emphasis in prose. A rough SVG stroke on <strong>, cycling through three shapes by paragraph, with box-decoration-break so it survives a line wrap.",
+      "html": "<p class=\"ds-copy\">I build <strong class=\"ds-mark\">enterprise-grade Salesforce solutions</strong> and AI-augmented systems.</p>",
+      "css": ".ds-copy { font-family: Archivo, 'Archivo Fallback', system-ui, sans-serif; font-size:1rem; line-height:1.7; color:var(--text-dim,#56534a); margin:0; } .ds-mark { font-weight:inherit; color:var(--text,#191814); padding:0.16em 0.22em 0.2em; margin:0 -0.06em; -webkit-box-decoration-break:clone; box-decoration-break:clone; background-repeat:no-repeat; background-size:100% 100%; background-image:url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'><path d='M0,7 C40,4 80,9 120,6 C160,3 180,8 200,6 L200,34 C160,37 120,32 80,35 C40,38 20,33 0,35 Z' fill='%23e8b93c' fill-opacity='.42'/></svg>\"); }"
     }
   ],
   "narrative": {
-    "northStar": "The Five-Ink Garden",
-    "overview": "The site is a plot of ground rendered under a fixed ink budget. Everything sits on a green-black ground (#0d1310), with a near-black soil (#080c0a) held back for the two places something is inset into that ground — the portrait frame and code blocks; the only material in the world is an ordered dither, and it appears exclusively where a real photograph is being reproduced. Dithering is a reproduction technique, not a texture: it earns its place because the five-ink ramp genuinely cannot hold the tones of a photograph, and it is therefore forbidden as wallpaper. The stylesheet contains zero radial-gradient declarations and the build ships no procedural dot field, no animated noise, no grain overlay. That absence is a rule, not an oversight.\n\nDensity is editorial rather than dashboard-like. Structure is carried by hairlines (#202a23, #2f3d33) and by whitespace; there are no bordered card grids and no drop shadows anywhere in the build. Confidence is the one thing the interface visualises: a three-step stem ramp encodes how tended a note is, and it is the only place saturation is allowed to mean something. One warm ochre (#d9a441) exists solely as the focus ring — it never appears as decoration.\n\nConfirmed rejections, all verifiable in the built code: no eyebrow or kicker above any heading (the entry kind moved into the meta row), no mono-caps \"technical\" label kit, no text-transform: uppercase and no positive letter-spacing anywhere sitewide, no decorative section numbering.",
+    "northStar": "The Cyanotype Proof",
+    "overview": "A proof pulled in Prussian ink on uncoated cream stock, before the run. The whole site is one reproduction technique working under a fixed ink budget: photographs, the ground behind the page, and the one moment of motion are all the same ink at the same dot pitch. Nothing is drawn that could not be printed.\n\nThe register is quiet, printed and exact. Precision is the personality — there is no second voice, no second family, no surface that raises itself above the paper. Depth is tonal, carried by dot density rather than by shadow, because a press has no shadows to give. Where the system spends anything, it spends it on the material: a portrait that develops on arrival like a print coming up in the tray, and a soft area under the pointer where the tint lifts off the page.\n\nIt explicitly refuses four neighbours: the dark developer portfolio it replaced, the digital-garden apparatus that preceded it, the SaaS marketing template, and monospace worn as a costume for “technical”.",
     "keyCharacteristics": [
-      "One dithered material, applied only to reproduced photographs",
-      "Five-ink ramp defined once in CSS and read at runtime by the renderer",
-      "Two families only: Literata reads and displays, Archivo runs the interface",
-      "Hairlines and whitespace instead of cards and shadows",
-      "Growth stage as the single encoded signal, carried by saturation not hue",
-      "One warm accent reserved entirely for focus"
+      "One ink, one dot pitch (3 CSS px), one typeface.",
+      "Cream ground; the dither ramp's top step *is* the page colour.",
+      "Zero shadows, zero radii, zero gradients — structure is hairlines and space.",
+      "Contrast is budgeted numerically, not by eye.",
+      "Motion exists only where the material would actually move."
     ],
     "rules": [
       {
-        "name": "The One Warm Rule",
-        "body": "Signal ochre appears only as a focus ring. If a new surface needs a warm accent for anything else, it does not get one.",
-        "section": "colors"
+        "name": "The One Ink Rule",
+        "section": "colors",
+        "body": "Photographs, the page field, and the accent are all the same blue family. Everything the press puts on the sheet is one ink; if something needs to be distinguished, distinguish it with weight, size, or a rule."
       },
       {
-        "name": "The Ramp Is Defined Once Rule",
-        "body": "--ink-0 … --ink-4 and --dither-cell live in :root and are read from computed style by the dither engine. Never hardcode ink values in a script or a component; changing the CSS custom property is the supported way to change every rendered image.",
-        "section": "colors"
+        "name": "The Ceiling Rule",
+        "section": "colors",
+        "body": "--field-amp (0.24) is a contrast budget, not a taste setting. Because the field is a two-step ramp, the amplitude *is* dot coverage: at 24% coverage of Field Ink the ground stays light enough for Text Faint — the faintest type on the site — to hold 4.5:1 over it."
       },
       {
-        "name": "The Saturation-Not-Hue Rule",
-        "body": "Growth stage is encoded by moving along one green from muted to bright. Do not add a second hue to represent state.",
-        "section": "colors"
+        "name": "The Hairline Is Not An Affordance Rule",
+        "section": "colors",
+        "body": "--line and --line-hi draw structure. Anything a user must notice in order to act — a link underline, a button border — takes --text-faint or stronger."
       },
       {
-        "name": "The Two Faces Rule",
-        "body": "Content titles and long-form reading take Literata; interface, meta and micro-labels take Archivo. There is no third voice. The mono stack is for code, not for looking technical.",
-        "section": "typography"
+        "name": "The One Family Rule",
+        "section": "typography",
+        "body": "No second typeface. Mono is for code, of which there are two sites; it is never a voice."
       },
       {
-        "name": "The One Ladder Rule",
-        "body": "Sizes come from the 1.25 ratio ladder (--t-xs 0.8rem through --t-3xl 3.052rem) off a 16px base. --t-read (1.125rem) is not a rung: it is the serif's optical match to --t-base, used only for serif reading.",
-        "section": "typography"
+        "name": "The Tracking Band Rule",
+        "section": "typography",
+        "body": "Three tracking values, each tied to a size band, because a grotesque needs more negative tracking as it grows: -0.035em (--track-display) on the two display roles, -0.02em (--track-tight) on titles and prose headings, and 0.12em on the uppercase label. Nothing else is tracked, and nothing goes past the -0.04em floor."
       },
       {
-        "name": "The No Tracking-Out Rule",
-        "body": "Exactly one tracking value exists (-0.02em) and it applies only above --t-lg. Zero text-transform: uppercase and zero positive letter-spacing declarations remain sitewide; keep it that way.",
-        "section": "typography"
+        "name": "The No Lift Rule",
+        "section": "elevation",
+        "body": "Nothing floats. If an element needs to separate from what is behind it, give it the paper colour and a 1px rule."
       },
       {
-        "name": "The Optical Size Rule",
-        "body": "Literata is variable on opsz 7..72. Set it explicitly per role — small in prose (14), large in display (72). Values above 72 silently clamp, so do not request them.",
-        "section": "typography"
+        "name": "The Heading Measure Rule",
+        "section": "typography",
+        "body": "A heading is never set wider than the body it heads: 20ch display, 24ch entry title, 34ch prose heading, 46ch row title, against 66ch prose. Every heading takes text-wrap: balance; body and lead copy take text-wrap: pretty."
       },
       {
-        "name": "The No-Lift Rule",
-        "body": "Hover never lifts, scales a surface, or casts. It changes tone (surface -> surface-hi) or washes with accent-deep at 0.09 opacity. The one scale transform in the build is on a photograph inside a fixed frame, where nothing moves but the image.",
-        "section": "elevation"
-      },
-      {
-        "name": "The Shared Hero Rule",
-        "body": "There is one hero grid and it lives in the global stylesheet. A page that needs a hero uses .hero-grid as written; it does not re-declare the columns, the gap, or the collapse locally.",
-        "section": "layout"
+        "name": "The Second Implement Rule",
+        "section": "colors",
+        "body": "The highlighter is the single exception to one ink, and it earns the exception by not being press ink at all: it is a marker someone took to the printed sheet afterwards. That is why it may be a different colour, why its edges are rough where everything else is exact, and why it is the only thing on the page that looks applied by hand."
       }
     ],
     "dos": [
-      "Do dither only real photographs, through img[data-dither], and let public/js/dither.js read --ink-* and --dither-cell from :root.",
-      "Do encode growth stage with the three-step stem ramp — the .entry-stem rail or the .stage meter — and always pair the visual ramp with text a screen reader can reach.",
-      "Do draw structure with 1px hairlines (line, line-hi) and whitespace.",
-      "Do keep prose at 68ch and secondary copy between 54ch and 62ch.",
-      "Do set font-variation-settings: 'opsz' explicitly per role: 14 for prose, 40–48 for titles, 72 for display.",
-      "Do reserve signal ochre for the focus ring, and keep a visible focus ring on every interactive element.",
-      "Do put a new collection of things into .work / .work-item, and a staged or dated index into .index / .entry, rather than inventing another list style.",
-      "Do use the shared .hero-grid as written for any new hero, portrait included.",
-      "Do use authored inline SVG on the 1.5 stroke weight via .icon for any new icon."
+      "Do read the ink ramp and --dither-cell from :root. The palette is defined once; no dithering code may hardcode a colour or a pitch.",
+      "Do end any photographic ramp at --paper, so a dithered image dissolves into the page rather than sitting in a box.",
+      "Do treat --field-amp as a contrast budget: if you change the field ink or the amplitude, redo the sum against --text-faint and keep it at 4.5:1.",
+      "Do give every link a visible underline at rest in --text-faint, and let hover move both text and underline to --accent.",
+      "Do draw structure with 1px hairlines and whitespace.",
+      "Do keep prose at 66ch, leads at 58ch, and row copy at 62ch.",
+      "Do author icons as inline SVG on a 1.5 stroke weight.",
+      "Do theme the surfaces the browser draws — selection, caret, focus ring, scrollbar — from the palette.",
+      "Do stop every canvas behaviour under prefers-reduced-motion and draw a single static frame instead.",
+      "Do keep the real content behind any decorative canvas, aria-hidden the canvas, and hand the content back if the canvas fails.",
+      "Do put any new list of things into .rows / .row rather than inventing another list style.",
+      "Do let the frame rate give way before the dot pitch on expensive surfaces; the pitch is shared with the photographs and cannot drift.",
+      "Do request the font from the document head with preconnect, never a CSS @import, and request only the weights the build sets.",
+      "Do mark emphasis with the highlighter, and let it ride on <strong> so it stays authorable from Keystatic's bold control."
     ],
     "donts": [
-      "Don't use dither, dot fields, grain or noise as a background texture. Zero radial-gradient declarations exist in the stylesheet; keep the count at zero.",
-      "Don't put an eyebrow, kicker or overline above a heading. Kind, stage and date belong in the meta row beneath the title.",
-      "Don't add a drop shadow, glow, or spread ring. The build declares no box-shadow; depth is tonal.",
-      "Don't introduce text-transform: uppercase or any positive letter-spacing. Both counts are zero sitewide.",
-      "Don't use monospace as a voice. It is for code, and there are exactly three code sites.",
-      "Don't add a third font family or a second tracking value.",
-      "Don't build a bordered card grid; the content list replaced it.",
-      "Don't number sections decoratively, or add a second hue to signal state.",
-      "Don't ship a glyph icon font. Icons are authored inline SVG.",
-      "Don't request a Literata opsz above 72; it clamps silently."
+      "Don't add a box-shadow, border-radius, or gradient. All three counts are zero and are meant to stay zero.",
+      "Don't introduce a second hue, a second typeface, or a third tracking value.",
+      "Don't use monospace as a voice. It is for code, and there are two code sites.",
+      "Don't let --line or --line-hi be the only thing marking something interactive; they are decoration and sit below 3:1.",
+      "Don't build a bordered card grid. The row list replaced it.",
+      "Don't put an eyebrow, kicker or overline above a heading.",
+      "Don't step the dither pitch responsively, or give one photograph two thresholds on two pages. One pitch, one pattern.",
+      "Don't quantise a photograph into fewer than the five ramp steps.",
+      "Don't add a second breakpoint without first checking whether the composition is wrong.",
+      "Don't animate anything the material would not actually do. The field drifts, a print develops, a lamp moves; nothing bounces, pulses or slides in on scroll.",
+      "Don't reintroduce growth stages, wiki-links or backlinks. They were removed deliberately.",
+      "Don't ship a glyph icon font or stand an emoji in for an icon.",
+      "Don't load a font weight or style nothing sets. The italic axis was requested for months and used nowhere.",
+      "Don't use bold as emphasis in prose. The weight is reserved for headings and labels; in running text, emphasis is the marker."
     ]
   }
 }

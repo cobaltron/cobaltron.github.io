@@ -13,7 +13,7 @@ interface Props {
 
 const {
   title,
-  description = 'Rajarshi Lahiri — a digital garden on Salesforce engineering, applied AI, and things I am still working out.',
+  description = 'Rajarshi Lahiri — projects, photography, and a reading list.',
   image = '/img/photo.jpg',
   type = 'website',
 } = Astro.props;
@@ -30,10 +30,26 @@ const fullTitle = title === 'home' ? 'Rajarshi Lahiri' : `${title} — Rajarshi 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0d1310" />
+    <meta name="theme-color" content="#f5f3ed" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title="Rajarshi Lahiri — posts" href="/rss.xml" />
+
+    {/*
+      The font used to be an @import at the top of global.css, which is the
+      slowest way to ask for one: the browser has to download and parse the
+      stylesheet before it even learns the font exists. From here the request
+      starts with the document, and the preconnects open the two connections
+      it needs while the HTML is still arriving.
+
+      Only the three weights the site actually sets. The italic that used to be
+      requested here is not used anywhere in the build.
+    */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap"
+    />
 
     <meta property="og:type" content={type} />
     <meta property="og:title" content={fullTitle} />
@@ -43,20 +59,15 @@ const fullTitle = title === 'home' ? 'Rajarshi Lahiri' : `${title} — Rajarshi 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@rajarshi_lahiri" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-
     <script src="/js/dither.js" defer is:inline></script>
 
     <slot name="head" />
   </head>
 
   <body>
+    <!-- Decorative: the same five inks as the photographs, used as ground.
+         Painted by dither.js; absent and harmless without JS. -->
+    <canvas class="page-field" aria-hidden="true"></canvas>
     <a class="skip-link" href="#main">Skip to content</a>
     <Nav />
     <main id="main">

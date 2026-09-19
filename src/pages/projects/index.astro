@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import Hero from '../../components/Hero.astro';
 
 const projects = (await getCollection('projects'))
   .filter((p) => import.meta.env.DEV || !p.data.draft)
@@ -11,14 +10,19 @@ const projects = (await getCollection('projects'))
   });
 ---
 
-<Base title="Projects" description="Things I've built — Salesforce platform work, applied AI systems, and computer vision.">
-  <Hero compact>
-    <h1>Projects</h1>
-    <p class="hero-lead">
-      Platform engineering, applied AI, and a long tail of computer vision work
-      from earlier on.
-    </p>
-  </Hero>
+<Base
+  title="Projects"
+  description="Things I've built — Salesforce platform work, applied AI, and computer vision."
+>
+  <section class="head">
+    <div class="container">
+      <h1>Projects</h1>
+      <p class="lead">
+        Platform engineering, applied AI, and a long tail of computer vision
+        work from earlier on.
+      </p>
+    </div>
+  </section>
 
   <section class="section">
     <div class="container">
@@ -31,16 +35,19 @@ const projects = (await getCollection('projects'))
             </p>
           </div>
         ) : (
-          <ul class="work work--2">
+          <ul class="rows">
             {projects.map((project) => (
-              <li class="work-item">
-                <h3>
+              <li class="row">
+                <h2>
                   <a href={`/projects/${project.id}`}>{project.data.title}</a>
-                </h3>
+                </h2>
                 <p>{project.data.summary}</p>
-                {project.data.stack.length > 0 && (
-                  <p class="work-meta">{project.data.stack.join(', ')}</p>
-                )}
+                <p class="row-meta">
+                  {project.data.year && <span>{project.data.year}</span>}
+                  {project.data.stack.length > 0 && (
+                    <span>{project.data.stack.join(' · ')}</span>
+                  )}
+                </p>
               </li>
             ))}
           </ul>
