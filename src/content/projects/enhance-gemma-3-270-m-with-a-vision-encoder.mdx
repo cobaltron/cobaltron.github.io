@@ -1,0 +1,15 @@
+---
+title: Enhance Gemma 3 270M with a vision encoder
+summary: >
+  An ultra-lightweight vision-language model built for edge deployment,
+  assembled from parts rather than taken off the shelf.
+year: 2026
+stack:
+  - Python
+  - Pytorch
+order: 4
+draft: false
+---
+Architecture. A frozen SigLIP-B/16 encoder produces 196 patch embeddings from a 224px image. A trainable Perceiver-style resampler compresses those to 64 latent tokens via cross-attention, which cuts decode cost for edge inference. A two-layer MLP projector maps them from SigLIP’s 768-dim space into Gemma 3 270M’s 640-dim hidden space, where they are prepended as soft visual tokens ahead of the prompt and caption embeddings. Gemma’s base weights stay frozen; LoRA adapters on the attention projections carry the adaptation. Roughly 15 to 18M trainable parameters, about 4 to 5 percent of the total.
+
+Training. Stage one was a projector-only alignment pass, already validated. Stage two is LoRA fine-tuning for image captioning on COCO Captions 2017 (118K images, five human captions each), with loss masked to caption tokens only. Running on a single RTX 5070 Ti under bf16 autocast.
